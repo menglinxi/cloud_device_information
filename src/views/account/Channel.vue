@@ -2,7 +2,7 @@
     <section>
         <el-row>
             <el-col :span='6'>
-                <el-button @click='toShowDialog(0)' type='success' size='medium'><i class='el-icon-plus'></i>新建渠道</el-button>
+                <el-button @click="toShowDialog('0')" type='success' size='medium'><i class='el-icon-plus'></i>新建渠道</el-button>
             </el-col>
             <el-col :offset='12' :span='6'>
                 <el-input v-model='searchMsg' placeholder="渠道名称搜索" size='medium' clearable @keyup.native.enter='searchChannel' @clear='getData'>
@@ -48,10 +48,26 @@
             label="说明"
             show-overflow-tooltip>
             </el-table-column>
+            <el-table-column
+            prop="pname"
+            align="center"
+            label="所属父渠道"
+            show-overflow-tooltip>
+            </el-table-column>
             <el-table-column label='操作' width='250' align="center">
                 <template slot-scope='scope'>
-                    <el-button @click='toShowDialog(1, scope.row)' size='mini' type='success'>编辑</el-button>
-                    <el-button @click='toDel(scope.row.id)' size='mini' type='danger' plain>删除</el-button>
+                    <el-dropdown @command='toShowDialog' trigger="click">
+                        <el-button type='success' size='mini' @click="getRow(scope.row)">
+                            <i class="el-icon-setting"></i>
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="3">编辑</el-dropdown-item>
+                            <el-dropdown-item command="1" v-if="ishow">新增子菜单</el-dropdown-item>
+                            <el-dropdown-item command="2">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                     </el-dropdown>
+                     
                 </template>
             </el-table-column>
         </el-table>
@@ -64,10 +80,26 @@
             @current-change='handlePage'>
         </el-pagination>
         <el-dialog :title='msgContent.title' :visible.sync="isShowContent" width='500px' @close='toCancel'>
-            <el-form ref='form' label-width='100px'>
+            <el-form ref='form' label-width='100px'>      
+                <el-form-item label='设置顶级'>
+                    <el-input v-model='msgContent.content.pname' :disabled="disabled" placeholder="为空默认为子级"></el-input>
+                </el-form-item>
                 <el-form-item label='渠道名称'>
                     <el-input v-model='msgContent.content.name' placeholder="必填"></el-input>
                 </el-form-item>
+                <el-form-item label='所属公司'>
+                    <el-input v-model='msgContent.content.companyid' placeholder="所属公司" disabled="true"></el-input>
+                </el-form-item>
+                <!-- <el-form-item label="所属公司">
+                    <el-select v-model="msgContent.content.companyid">
+                        <el-option
+                        v-for="item in companyList"
+                        :key="item.id"
+                        :label="item.name"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item> -->
                 <el-form-item label='渠道码'>
                     <el-input v-model='msgContent.content.code' placeholder="必填"></el-input>
                 </el-form-item>
@@ -87,6 +119,15 @@
 export default {
     data() {
         return {
+            companyList:[],
+            ishow:false,
+            disabled:true,
+            data:[],
+            defaultProps: {
+                label: "name",
+                id: "id"
+            },
+            Rowdata:{},
             currentList: [],
             searchMsg: '',
             isShowContent: false,
@@ -95,7 +136,9 @@ export default {
                 content: {
                     name: '',
                     code: '',
-                    linkman: ''
+                    linkman: '',
+                    pname:'',
+                    companyid:''
                 }
             },
             pager: {
@@ -103,15 +146,88 @@ export default {
                 pageSize: 15,
                 recordCount: 10
             },
-            isAdd: true
+            isAdd: '0',
+            pnameList: {}
         }
     },
     methods: {
+         handleNodeClick(data) {
+        },
+        getRow(rowdata){
+            this.Rowdata=rowdata
+            console.log('row',rowdata)
+            if(rowdata.pid==0){
+                this.ishow=true
+            }else{
+                this.ishow=false
+            }
+        },
+        
+        toShowDialog(type){
+            if(type=='0'){
+                //新建渠道
+                this.isShowContent = true
+                this.msgContent.title = '新建渠道'
+                this.isAdd='0'
+            }else if(type=='1'){
+                //創建子菜單
+                this.isShowContent = true
+                this.msgContent.content.pname=this.Rowdata.name
+                this.isAdd='1'
+                 this.msgContent.title = '新建子渠道'
+                 
+            }else if(type=='2'){
+                //刪除
+                this.isAdd='2'
+                this.$confirm('确定删除此渠道吗？', '提示', {
+                confirmButtonText: '删除',
+                cancelButtonText: '取消'
+                    }).then(() => {
+                        this.$api.Channel.delete(this.Rowdata.id, res => {
+                            if(res) {
+                                this.$message({
+                                    message: '渠道删除成功',
+                                    type: 'success'
+                                }) 
+                                this.pager.pageNumber = 1
+                                this.msgContent.isShowContent = false
+                                this.getData() 
+                            }                    
+                        })
+                        this.isShowContent = false
+                    }).catch((err) => {
+                        this.$message({
+                            message: '删除失败',
+                            type: 'error'
+                        })
+                    })
+                
+            }
+            else if(type=='3'){
+                //編輯  
+                this.ishow=true
+                this.isShowContent = true
+                this.isAdd='3'
+                 this.msgContent.title = '編輯'
+                this.msgContent.content=Object.assign({},this.Rowdata)
+               
+            }
+        },
         getData() {
             this.$api.Channel.list(this.pager.pageNumber, res => {
                 const data = res.pager
                 if(data){
-                    this.currentList = data.dataList
+                    this.currentList = data.dataList.map((i) => {
+                        let pname = this.pnameList[Number(i.pid)]
+                        if(pname) {
+                            i.pname = pname
+                        }
+                        else {
+                            i.pname = ' '
+                        }
+                        console.log('aaaaaa', pname)
+                        return i
+                    })
                     this.pager = data.pager
                 }
             })
@@ -129,16 +245,6 @@ export default {
                 }
             })
         },
-        toShowDialog(type, item) {
-            this.isAdd = !type ? true : false
-            this.msgContent.title = !type ? '新建渠道' : '编辑渠道'
-            this.msgContent.content = !type ? {
-                name: '',
-                code: '',
-                linkman: ''
-            } : item
-            this.isShowContent = true
-        },
         toCancel() {
             this.isShowContent = false
             this.msgContent = {
@@ -152,6 +258,7 @@ export default {
             this.getData()
         },
         toSaveChannel() {
+            console.log(this.isAdd)
             if(!this.msgContent.content.name) {
                 this.$message({
                     message: '渠道名称不能为空！',
@@ -159,7 +266,7 @@ export default {
                 })
                 return
             }
-            if(!this.isAdd) {
+            if(this.isAdd=='3') {
                 this.$api.Channel.edit(this.msgContent.content, res => {
                     if(res.channel) {
                         this.$message({
@@ -171,7 +278,7 @@ export default {
                     this.isShowContent = false
                 })
             }
-            else {
+            else if(this.isAdd=='0'){
                 this.$api.Channel.add(this.msgContent.content, res => {
                     if(res.channel) {
                         this.$message({
@@ -182,32 +289,40 @@ export default {
                     }   
                     this.isShowContent = false   
                 })
+            }else if(this.isAdd=='1'){             
+                this.$api.Channel.addchild(this.Rowdata.id,this.msgContent.content, res => {
+                    if(res.channel) {
+                        this.$message({
+                            message: '子渠道创建成功！',
+                            type: 'success'
+                        })
+                        this.pager.pageNumber = 1                     
+                    }
+                    this.isShowContent = false   
+                })
+   
             }
             
         },
-        toDel(id) {
-            this.$confirm('确定删除此渠道吗？', '提示', {
-                confirmButtonText: '删除',
-                cancelButtonText: '取消'
-            }).then(() => {
-                this.$api.Channel.delete(id, res => {
-                    if(res) {
-                        this.$message({
-                            message: '渠道删除成功',
-                            type: 'success'
-                        }) 
-                        this.pager.pageNumber = 1
-                        this.msgContent.isShowContent = false
-                        this.getData() 
-                    }                    
-                })
-            }).catch((err) => {
-                this.$message({
-                    message: '删除失败',
-                    type: 'error'
-                })
+       getAllData(){
+           let type = 0
+           this.$api.Channel.allList(type,res => {
+                const data = res.pager         
+                if(data){
+                    this.pnameList = {}
+                    data.forEach((i) => {
+                        this.pnameList[i.id] = i.name
+                        
+                    })
+
+                }
             })
-        },
+       },
+       getcompanylist(){
+            this.$api.Channel.companylist(res=>{
+                console.log('companyl44',res)
+            })
+       },
         handlePage(e) {
             this.pager.pageNumber = e
             this.getData()
@@ -215,6 +330,8 @@ export default {
     },
     created() {
         this.getData()
+        this.getAllData()
+        this.getcompanylist()
     }
 }
 </script>
