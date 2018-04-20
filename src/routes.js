@@ -13,6 +13,7 @@ import Payment from './views/acl/Payment.vue'
 
 import Account from './views/account/Account.vue'
 import Channel from './views/account/Channel.vue'
+import UserMsg from './views/account/UserMsg.vue'
 
 import AndroidDevice from './views/acl/AndroidDevice'
 import iosDevice from './views/acl/iosDevice'
@@ -166,7 +167,16 @@ let routes = [
         meta: {
           requiresAuth: true
         }
-      } 
+      },
+      {
+        path: '/user_msg',
+        iconCls: 'el-icon-view',
+        component: UserMsg,
+        name: '注册用户信息',
+        meta: {
+          requiresAuth: true
+        }
+      }
     ]
   },
   {

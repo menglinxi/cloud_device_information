@@ -9,6 +9,7 @@ import Payment from './acl/payment';
 
 import Account from "./biz/account";
 import Channel from "./biz/channel";
+import UserMsg from "./biz/userMsg";
 
 import CodeBook from "./codebook/code";
 import CodeBookGroup from "./codebook/group";
@@ -33,6 +34,7 @@ export default {
   Payment: Payment,
   Account: Account,
   Channel: Channel,
+  UserMsg: UserMsg,
   CodeBook: CodeBook,
   CodeBookGroup: CodeBookGroup,
   Mission: Mission,
