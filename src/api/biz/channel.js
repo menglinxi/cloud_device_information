@@ -17,7 +17,7 @@ export default {
      * @param {Function} success 回调
      */
     companylist(success) {
-        http.get('codebook/sub/2',success);
+        http.get('codebook/top/2',success);
     },
     /**
     * 所有渠道（不带分页）
@@ -68,6 +68,7 @@ export default {
      * @param {string} id  ID
      * @param {string} code 渠道码
      * @param {string} linkman 说明
+     * @param {string} pid 父渠道
      * @param {Function} success 回调 
      */
     edit(msg, success) {
@@ -75,7 +76,9 @@ export default {
             id: msg.id,
             name: msg.name,
             code: msg.code,
-            linkman: msg.linkman
+            linkman: msg.linkman,
+            pid: msg.pid,
+            companyid:msg.companyid
         }, success)
     },
     /**

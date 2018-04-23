@@ -54,6 +54,12 @@
             label="所属父渠道"
             show-overflow-tooltip>
             </el-table-column>
+            <el-table-column
+            prop="companyname"
+            align="center"
+            label="所属公司"
+            show-overflow-tooltip>
+            </el-table-column>
             <el-table-column label='操作' width='250' align="center">
                 <template slot-scope='scope'>
                     <el-dropdown @command='toShowDialog' trigger="click">
@@ -87,19 +93,9 @@
                 <el-form-item label='渠道名称'>
                     <el-input v-model='msgContent.content.name' placeholder="必填"></el-input>
                 </el-form-item>
-                <el-form-item label='所属公司'>
-                    <el-input v-model='msgContent.content.companyid' placeholder="所属公司" disabled="true"></el-input>
+                <el-form-item label='所属公司' v-if="ishow0">
+                    <el-input v-model='msgContent.content.companyname' placeholder="所属公司" :disabled="disabled"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属公司">
-                    <el-select v-model="msgContent.content.companyid">
-                        <el-option
-                        v-for="item in companyList"
-                        :key="item.id"
-                        :label="item.name"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
                 <el-form-item label='渠道码'>
                     <el-input v-model='msgContent.content.code' placeholder="必填"></el-input>
                 </el-form-item>
@@ -121,6 +117,7 @@ export default {
         return {
             companyList:[],
             ishow:false,
+            ishow0:true,
             disabled:true,
             data:[],
             defaultProps: {
@@ -155,7 +152,6 @@ export default {
         },
         getRow(rowdata){
             this.Rowdata=rowdata
-            console.log('row',rowdata)
             if(rowdata.pid==0){
                 this.ishow=true
             }else{
@@ -166,10 +162,11 @@ export default {
         toShowDialog(type){
             if(type=='0'){
                 //新建渠道
+                this.ishow0=false
                 this.isShowContent = true
                 this.msgContent.title = '新建渠道'
                 this.isAdd='0'
-            }else if(type=='1'){
+            }else if(type=='1'&&this.Rowdata.pid==0){
                 //創建子菜單
                 this.isShowContent = true
                 this.msgContent.content.pname=this.Rowdata.name
@@ -219,13 +216,19 @@ export default {
                 if(data){
                     this.currentList = data.dataList.map((i) => {
                         let pname = this.pnameList[Number(i.pid)]
+                        let companyname=this.companyList[Number(i.companyid)]
                         if(pname) {
                             i.pname = pname
                         }
                         else {
                             i.pname = ' '
                         }
-                        console.log('aaaaaa', pname)
+                        if(companyname) {
+                            i.companyname = companyname
+                        }
+                        else {
+                            i.companyname = ' '
+                        }
                         return i
                     })
                     this.pager = data.pager
@@ -317,11 +320,19 @@ export default {
 
                 }
             })
+            this.getcompanylist()
        },
        getcompanylist(){
-            this.$api.Channel.companylist(res=>{
-                console.log('companyl44',res)
+           this.$api.Channel.companylist(res => {
+                const data = res.codes         
+                if(data){                 
+                    data.forEach((i) => {
+                        this.companyList[i.id] = i.value           
+                    })
+                    
+                }
             })
+          
        },
         handlePage(e) {
             this.pager.pageNumber = e
@@ -331,7 +342,7 @@ export default {
     created() {
         this.getData()
         this.getAllData()
-        this.getcompanylist()
+        
     }
 }
 </script>
