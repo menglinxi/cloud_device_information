@@ -87,14 +87,21 @@
         </el-pagination>
         <el-dialog :title='msgContent.title' :visible.sync="isShowContent" width='500px' @close='toCancel'>
             <el-form ref='form' label-width='100px'>      
-                <el-form-item label='设置顶级'>
+                <el-form-item label='设置顶级' v-if="ishow3">
                     <el-input v-model='msgContent.content.pname' :disabled="disabled" placeholder="为空默认为父级"></el-input>
                 </el-form-item>
                 <el-form-item label='渠道名称'>
                     <el-input v-model='msgContent.content.name' placeholder="必填"></el-input>
                 </el-form-item>
-                <el-form-item label='所属公司' v-if="ishow0">
-                    <el-input v-model='msgContent.content.companyname' placeholder="所属公司" :disabled="disabled"></el-input>
+                <el-form-item label='所属公司' v-if="ishow2">
+                    <el-select v-model='msgContent.content.companyid' :disabled="disabled0" placeholder="请选择所属公司">
+                        <el-option
+                         v-for="item in datalist"
+                         :key="item.id"
+                        :label="item.name"
+                        :value="item.id"                       
+                        ></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label='渠道码'>
                     <el-input v-model='msgContent.content.code' placeholder="必填"></el-input>
@@ -115,10 +122,13 @@
 export default {
     data() {
         return {
+            datalist:[],
             companyList:[],
+            ishow3:true,
+            ishow2:true,
             ishow:false,
-            ishow0:true,
             disabled:true,
+            disabled0:false,
             data:[],
             defaultProps: {
                 label: "name",
@@ -157,19 +167,24 @@ export default {
             }else{
                 this.ishow=false
             }
+            console.log('row',rowdata)
         },
         
         toShowDialog(type){
             if(type=='0'){
                 //新建渠道
-                this.ishow0=false
+                this.disabled0=false
+                this.ishow3=false
                 this.isShowContent = true
                 this.msgContent.title = '新建渠道'
                 this.isAdd='0'
             }else if(type=='1'&&this.Rowdata.pid==0){
                 //創建子菜單
-                this.isShowContent = true
                 this.msgContent.content.pname=this.Rowdata.name
+                this.msgContent.content.companyid=this.Rowdata.companyname
+                this.isShowContent = true
+                this.disabled0=true
+                this.ishow3=true               
                 this.isAdd='1'
                  this.msgContent.title = '新建子渠道'
                  
@@ -202,6 +217,8 @@ export default {
             }
             else if(type=='3'){
                 //編輯  
+                this.disabled0=true
+                this.ishow3=false
                 this.ishow=true
                 this.isShowContent = true
                 this.isAdd='3'
@@ -293,7 +310,7 @@ export default {
                     this.isShowContent = false   
                 })
             }else if(this.isAdd=='1'){             
-                this.$api.Channel.addchild(this.Rowdata.id,this.msgContent.content, res => {
+                this.$api.Channel.addchild(this.Rowdata.id,this.Rowdata.companyid,this.msgContent.content, res => {
                     if(res.channel) {
                         this.$message({
                             message: '子渠道创建成功！',
@@ -325,7 +342,8 @@ export default {
        getcompanylist(){
            this.$api.Channel.companylist(res => {
                 const data = res.codes         
-                if(data){                 
+                if(data){
+                    this.datalist=data                 
                     data.forEach((i) => {
                         this.companyList[i.id] = i.value           
                     })

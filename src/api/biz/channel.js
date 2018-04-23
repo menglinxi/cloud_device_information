@@ -52,13 +52,15 @@ export default {
     * @param {string} name 名称
     * @param {string} code 渠道码
     * @param {string} linkman 说明
+    *@param {string} companyid
     * @param {Function} success 回调  
     */
-    addchild(pid, msg, success) {
+    addchild(pid, companyid, msg, success) {
         http.postBody('channel/addchild', {
             name: msg.name,
             code: msg.code,
             linkman: msg.linkman,
+            companyid: companyid,
             pid:pid     
         }, success)
         console.log('msg',msg)
@@ -69,6 +71,7 @@ export default {
      * @param {string} code 渠道码
      * @param {string} linkman 说明
      * @param {string} pid 父渠道
+     * @param {string} companyid 
      * @param {Function} success 回调 
      */
     edit(msg, success) {
