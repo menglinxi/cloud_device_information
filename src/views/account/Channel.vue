@@ -88,7 +88,7 @@
         <el-dialog :title='msgContent.title' :visible.sync="isShowContent" width='500px' @close='toCancel'>
             <el-form ref='form' label-width='100px'>      
                 <el-form-item label='设置顶级'>
-                    <el-input v-model='msgContent.content.pname' :disabled="disabled" placeholder="为空默认为子级"></el-input>
+                    <el-input v-model='msgContent.content.pname' :disabled="disabled" placeholder="为空默认为父级"></el-input>
                 </el-form-item>
                 <el-form-item label='渠道名称'>
                     <el-input v-model='msgContent.content.name' placeholder="必填"></el-input>
