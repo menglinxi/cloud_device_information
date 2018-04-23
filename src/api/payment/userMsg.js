@@ -17,13 +17,24 @@ export default {
         http.get('codebook/top/2', success)
     },
     /**
-     * 获取渠道列表
-     * @param {Number} type 渠道级别0为顶级，1为子级
+     * 获取公司下的父渠道列表
+     * @param {Number} companyId 公司id
+     * @param {Function} success 成功回调 
+     */
+    channelOfCompany(companyId, success) {
+        http.get('channel/channelbycompany', {
+            companyid: companyId,
+            type: 0
+        }, success)
+    },
+    /**
+     * 获取父渠道下的子渠道列表
+     * @param {Number} id 父渠道id
      * @param {Function} success 成功回调
      */
-    channels(type, success) {
-        http.get('channel/all', {
-            type: type
+    subOfChannel(id, success) {
+        http.get('channel/sub', {
+            id: id
         }, success)
     }
 }

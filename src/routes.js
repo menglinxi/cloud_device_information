@@ -9,11 +9,12 @@ import UserToken from './views/acl/User_Token.vue'
 import Role from './views/acl/Role.vue'
 import Permission from './views/acl/Permission.vue'
 import Game from './views/acl/Game.vue'
-import Payment from './views/acl/Payment.vue'
 
 import Account from './views/account/Account.vue'
 import Channel from './views/account/Channel.vue'
-import UserMsg from './views/account/UserMsg.vue'
+
+import Payment from './views/payment/Payment.vue'
+import UserMsg from './views/payment/UserMsg.vue'
 
 import AndroidDevice from './views/acl/AndroidDevice'
 import iosDevice from './views/acl/iosDevice'
@@ -127,20 +128,9 @@ let routes = [
         meta: {
           requiresAuth: true
         },
-      },
-      {
-        path: '/payment',
-        component: Payment,
-        iconCls: 'el-icon-tickets',
-        name: '支付管理',
-        meta: {
-          requiresAuth: true
-        },
       }
     ]
   },
-
-
   {
     path: '/',
     component: Home,
@@ -167,15 +157,6 @@ let routes = [
         meta: {
           requiresAuth: true
         }
-      },
-      {
-        path: '/user_msg',
-        iconCls: 'el-icon-view',
-        component: UserMsg,
-        name: '注册用户信息',
-        meta: {
-          requiresAuth: true
-        }
       }
     ]
   },
@@ -188,7 +169,7 @@ let routes = [
       requiresAuth: true
     },
     children: [{
-        path: '/AndroidDevice',
+        path: '/Android_device',
         component: AndroidDevice,
         iconCls: 'el-icon-mobile-phone',
         name: 'Android设备管理',
@@ -197,15 +178,42 @@ let routes = [
         }
       },
       {
-        path: '/iosDevice',
+        path: '/ios_device',
         component: iosDevice,
         iconCls: 'el-icon-mobile-phone',
         name: 'IOS设备管理',
         meta: {
           requiresAuth: true
-        },
+        }
       }
     ]
+  },
+  {
+    path: '/',
+    component: Home,
+    name: '支付管理',
+    iconCls: 'el-icon-tickets',
+    meta: {
+      requiresAuth: true
+    },
+    children: [{
+      path: '/payment',
+      component: Payment,
+      iconCls: 'el-icon-tickets',
+      name: '支付信息',
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/user_msg',
+      iconCls: 'el-icon-view',
+      component: UserMsg,
+      name: '注册用户信息',
+      meta: {
+        requiresAuth: true
+      }
+    }]
   },
   {
     path: '/',
@@ -216,10 +224,10 @@ let routes = [
       requiresAuth: true
     },
     children: [{
-      path: '/missionList',
+      path: '/mission_list',
       component: MissionList,
       iconCls: 'el-icon-edit-outline',
-      name: '任务计划',
+      name: '任务列表',
       meta: {
         requiresAuth: true
       },
@@ -234,7 +242,7 @@ let routes = [
       requiresAuth: true
     },
     children: [{
-        path: '/codebook/group',
+        path: '/codegroup',
         iconCls: 'el-icon-fa-object-group',
         component: CodeBookGroup,
         name: '码本分组',

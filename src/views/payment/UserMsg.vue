@@ -7,7 +7,8 @@
             placeholder="公司名"
             style='width: 140px; margin-right: 20px;'
             slot='prepend'
-            clearable>
+            clearable
+            @change="getChannels('parent')">
             <el-option
               v-for="item in companyList"
               :key="item.id"
@@ -21,7 +22,8 @@
             style='width: 140px; margin-right: 20px;'
             slot='prepend'
             clearable
-            @change="getChannels('child')">
+            @change="getChannels('child')"
+            :disabled="obj.companyid.length == 0">
             <el-option
               v-for="item in pChannelList"
               :key="item.id"
@@ -44,7 +46,7 @@
             </el-option>
           </el-select>
           <el-select
-            v-model='searchName'
+            v-model='searchId'
             placeholder="字段名"
             style='width: 100px;'
             slot='prepend'
@@ -98,7 +100,7 @@ export default {
             name: '手机号码'
           }
         ],
-        searchName: '',
+        searchId: '',
         searchKey: '',
         dataList: [],
         colList: [
@@ -166,43 +168,41 @@ export default {
   },
   methods: {
     getData() {
-      this.getCompany()
-      this.getChannels('parent')
-    },
-    getCompany() {
       this.$api.UserMsg.company(res => {
         this.companyList = res.codes
+          const obj = {
+            page: 1,
+            channelid: 0,
+            pchannelid: 0,
+            companyid: 0,
+            name: '',
+            moblie: ''
+          }
+        this.getList(obj)
       })
     },
     getChannels(name) {
-      let type = 0
-      if(name == 'child') {
+      if(name == 'parent') {
+        if(this.obj.companyid == '') {
+          this.obj.channelid = ''
+          this.obj.pchannelid = ''
+          return
+        }
+        let id = this.obj.companyid
+        this.$api.UserMsg.channelOfCompany(id, res => {
+          this.pChannelList = res.pager
+        })
+      }
+      else if(name == 'child') {
         if(this.obj.pchannelid == '') {
           this.obj.channelid = ''
           return
         }
-        type = this.obj.pchannelid
-      }
-      this.$api.UserMsg.channels(type, res => {
-        if(name == 'parent') {
-          this.pChannelList = res.pager
-          let obj = this.obj
-          if(type == 0) {
-            obj = {
-              channelid: 0,
-              pchannelid: 0,
-              companyid: 0,
-              name: '',
-              moblie: '',
-              page: 1
-            }
-          }
-          this.getList(obj)
-        }
-        else if(name == 'child') {
+        let type = this.obj.pchannelid
+        this.$api.UserMsg.subOfChannel(type, res => {
           this.cChannelList = res.pager
-        }
-      })
+        })
+      }
     },
     getList(obj) {
       this.$api.UserMsg.list(obj, res => {
@@ -211,6 +211,19 @@ export default {
       })
     },
     getSearch() {
+      if(this.obj.companyid == '' && this.obj.pchannelid == '' && this.obj.channelid == '' && this.searchId == '' && this.searchKey == '') {
+          const objn = {
+              page: 1,
+              companyid: 0,
+              pchannelid: 0,
+              channelid: 0,
+              gamename: '',
+              orderid: '' 
+          }
+          this.getList(objn)
+          return
+      }
+      let obj = this.obj
       if(this.obj.companyid == '') {
         this.$message.error('请选择搜索的公司名')
         return
@@ -219,12 +232,7 @@ export default {
         this.$message.error('请选择搜索的父渠道名')
         return
       }
-      if(this.obj.channelid == '') {
-        this.$message.error('请选择搜索的子渠道名')
-        return
-      }
-      console.log(this.searchName)
-      if(this.searchName == '') {
+      if(this.searchId == '') {
         this.$message.error('请选择搜索的字段名')
         return
       }
@@ -232,55 +240,35 @@ export default {
         this.$message.error('请输入搜索的关键词')
         return
       }
-      if(this.searchName == 1) {
-        this.obj.name = this.searchKey
-        this.obj.moblie = ''
+      if(this.searchId == 1) {
+        obj.name = this.searchKey
+        obj.moblie = ''
       }
-      else if(this.searchName == 2) {
-        this.obj.moblie = this.searchKey
-        this.obj.name = ''
+      else if(this.searchId == 2) {
+        obj.moblie = this.searchKey
+        obj.name = ''
       }
-      this.getList(this.obj)
+      if(obj.channelid == '') {
+        obj.channelid = 0
+      }
+      this.getList(obj)
     },
     handlePage(e) {
       this.pager.pageNumber = e
-      let obj = {}
-      if(this.obj.channelid == '' && this.obj.pchannelid == '' && this.obj.companyid == '' && this.obj.searchName == '' && this.obj.searchKey == '') {
-        obj = {
+      if(this.obj.companyid == '' || this.obj.pchannelid == '' || this.obj.searchId == '' || this.obj.searchKey == '') {
+        this.getSearch()
+      }
+      else {
+        const obj = {
+          page: e,
           channelid: 0,
           pchannelid: 0,
           companyid: 0,
           name: '',
-          moblie: '',
-          page: e
+          moblie: ''
         }
+        this.getList(obj)
       }
-      else {
-        if(this.obj.companyid == '') {
-        this.$message.error('请选择搜索的公司名')
-        return
-        }
-        else if(this.obj.pchannelid == '') {
-          this.$message.error('请选择搜索的父渠道名')
-          return
-        }
-        else if(this.obj.channelid == '') {
-          this.$message.error('请选择搜索的子渠道名')
-          return
-        }
-        else if(this.searchName == '') {
-          this.$message.error('请选择搜索的字段名')
-          return
-        }
-        else if(this.searchKey == '') {
-          this.$message.error('请输入搜索的关键词')
-          return
-        }
-        else {
-          obj = this.obj
-        }
-      }
-      this.getList(obj)
     }
   },
   created() {

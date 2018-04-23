@@ -5,11 +5,12 @@ import Role from "./acl/role";
 import Permission from "./acl/permission";
 
 import Game from "./acl/game";
-import Payment from './acl/payment';
 
 import Account from "./biz/account";
 import Channel from "./biz/channel";
-import UserMsg from "./biz/userMsg";
+
+import Payment from './payment/payment';
+import UserMsg from "./payment/userMsg";
 
 import CodeBook from "./codebook/code";
 import CodeBookGroup from "./codebook/group";

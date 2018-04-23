@@ -8,14 +8,9 @@ export default {
      * @param {String} gamename 游戏名称
      * @param {Function} success 成功回调
      */
-        payList(page, orderid, gamename, success) {
-            http.get('pay/list', {
-                page: page,
-                orderid: orderid,
-                gamename: gamename
-            }, success)
+        payList(obj, success) {
+            http.get('pay/list', obj, success)
         },
-    
     /**
      * 修改支付状态
      * @param {Number} id ID
