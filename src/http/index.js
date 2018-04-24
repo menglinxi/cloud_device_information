@@ -13,30 +13,30 @@ axios.interceptors.request.use(config => {
     if (config.url.indexOf('metrics') >= 0) {
         return config;
     }
-    if (loadinginstace && loadinginstace.visible && !status) {
-        return config;
-    } else {
+    // if (loadinginstace && loadinginstace.visible && !status) {
+    //     return config;
+    // } else {
         status = true;
-        loadinginstace = Loading.service({
-            // target: '.content-container',
-            lock: true,
-            text: "接口请求中..."
-        });
-    }
+    //     loadinginstace = Loading.service({
+    //         // target: '.content-container',
+    //         lock: true,
+    //         text: "接口请求中..."
+    //     });
+    // }
     return config
 }, error => {
-    if (loadinginstace) {
-        loadinginstace.close();
+    // if (loadinginstace) {
+    //     loadinginstace.close();
         status = false;
-    }
+    // }
     return Promise.reject('加载超时')
 })
 //设置response统一处理
 axios.interceptors.response.use(response => {
-    if (loadinginstace) {
+    // if (loadinginstace) {
         status = false;
-        loadinginstace.close();
-    }
+    //     loadinginstace.close();
+    // }
     if (response.config.url.indexOf('druid') > 0 || response.config.url.indexOf('metrics') > 0) {
         if (response.status == 200) {
             return Promise.resolve(response.data);
@@ -50,10 +50,10 @@ axios.interceptors.response.use(response => {
         return Promise.reject(response.data.errors[0]);
     }
 }, error => { //http失败
-    if (loadinginstace) {
-        loadinginstace.close();
+    // if (loadinginstace) {
+    //     loadinginstace.close();
         status = false;
-    }
+    // }
     switch (error.response.status) {
         case 403:
             location.href = '/';

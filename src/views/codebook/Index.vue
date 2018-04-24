@@ -23,7 +23,7 @@
             </el-col>
         </el-row>
 
-        <el-table :data="pager.dataList" border stripe style="width: 100%">
+        <el-table :data="pager.dataList" border stripe style="width: 100%" v-loading='loading'>
             <el-table-tree-column
                     :remote="remote"
                     file-icon="icon icon-file"
@@ -94,6 +94,7 @@
     export default {
         data() {
             return {
+                loading: true,
                 groupId: "",
                 nodes: [],
                 defaultProps: {
@@ -161,6 +162,7 @@
                 }
             },
             changePage() {
+                this.loading = true
                 if (this.searchKey) {
                     this.doSearch();
                 } else {
@@ -178,6 +180,7 @@
                             item.children = [{}];
                             item.depth = 1;
                         });
+                        this.loading = true
                     }
                 );
             },
@@ -229,6 +232,7 @@
                         item.children = [{}];
                         item.depth = 1;
                     });
+                    this.loading = false
                 });
             }
         },

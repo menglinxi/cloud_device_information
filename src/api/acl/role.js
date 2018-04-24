@@ -66,5 +66,34 @@ export default {
      */
     delete(id, success) {
         http.get('role/delete/' + id, success);
+    },
+    /**
+     * 获取菜单列表
+     * @param {Function} success 成功回调
+     */
+    menuList(success) {
+        http.get('codebook/top/3', success)
+    },
+    /**
+     * 设置角色菜单
+     * @param {Number} roleId 角色id
+     * @param {Number} menus 菜单ids
+     * @param {Function} success 成功回调
+     */
+    roleMenu(roleId, menus, success) {
+        http.postBody('role/grantmenu', {
+            roleid: roleId,
+            menus: menus
+        }, success)
+    },
+    /**
+     * 获取角色菜单
+     * @param {Number} roleid 角色id
+     * @param {Function} success 成功回调
+     */
+    roleMenuList(roleid, success) {
+        http.get('role/getmenu', {
+            roleid: roleid
+        }, success)
     }
 }

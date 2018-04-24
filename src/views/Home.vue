@@ -31,22 +31,22 @@
                          active-text-color="#20a0ff" :default-active="$route.path" class="el-menu-vertical-demo"
                          unique-opened router
                          :collapse="collapsed">
-                    <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
-                        <el-menu-item v-if="item.leaf" v-show="checkPermission(item)" :index="item.children[0].path"
-                                      :key="index">
-                            <i :class="item.iconCls || item.children[0].iconCls"></i>
-                            <span slot="title">{{item.children[0].name}}</span>
+                    <template v-for="(item,index) in menus">
+                        <el-menu-item v-if="item.child.length == 1" :index="item.child[0].value" :key="index">
+                            <!-- <i :class="item.iconCls || item.children[0].iconCls"></i> -->
+                            <i class='title-icon' v-if='collapsed'>{{item.child[0].key.substring(0, 1)}}</i>
+                            <span slot="title">{{item.child[0].key}}</span>
                         </el-menu-item>
-                        <el-submenu v-else :index="index + ''" :key="index" v-show="checkPermission(item)">
+                        <el-submenu v-else :index="index + ''" :key="index">
                             <template slot="title">
-                                <i :class="item.iconCls"></i>
-                                <span slot="title">{{item.name}}</span>
+                                <!-- <i :class="item.iconCls"></i> -->
+                                <i class='title-icon' v-if='collapsed'>{{item.key.substring(0, 1)}}</i>
+                                <span slot="title">{{item.key}}</span>
                             </template>
-                            <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path"
-                                          v-show="checkPermission(child)">
+                            <el-menu-item v-for="child in item.child" :key="child.value" :index="child.value">
                                 <template slot="title">
-                                    <i :class="child.iconCls"></i>
-                                    <span slot="title">{{child.name}}</span>
+                                    <!-- <i :class="child.iconCls"></i> -->
+                                    <span slot="title">{{child.key}}</span>
                                 </template>
                             </el-menu-item>
                         </el-submenu>
@@ -132,7 +132,8 @@ export default {
         return this.loginUser.headKey
           ? baseUrl + "/image/" + this.loginUser.headKey
           : baseUrl + "/image/avatar";
-      }
+      },
+      menus: state => state.menus
     }),
     ...mapGetters(["hasRole", "hasPermission"])
   },
@@ -403,5 +404,15 @@ export default {
 .el-select,
 .el-input {
   width: 100%;
+}
+.title-icon{
+  font-size: 20px;
+  font-weight: bold;
+  font-style: normal;
+}
+.menu-line{
+  width: 50px;
+  height: 1px;
+  background-color: #475669;
 }
 </style>

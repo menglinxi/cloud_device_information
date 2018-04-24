@@ -61,7 +61,7 @@
             }
         },
         methods: {
-            ...mapMutations(["save", "remove"]),
+            ...mapMutations(["save", "remove", "saveMenus"]),
             refreshCaptcha() {
                 this.captcha = baseUrl + "/captcha?length=4&" + Math.random();
             },
@@ -70,9 +70,11 @@
                     if (valid) {
                         this.$api.User.login(this.loginForm, data => {
                             let loginUser = data.loginUser;
+                            let menus = data.menus;
                             loginUser.roles = data.roles;
                             loginUser.permissions = data.permissions;
                             this.save(loginUser);
+                            this.saveMenus(menus)
                             let redirect = this.$route.query.redirect? this.$route.query.redirect : '/'
                             this.$router.push(redirect);
                             this.$message.success('登录成功~~~')

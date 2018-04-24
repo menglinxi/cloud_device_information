@@ -17,6 +17,9 @@ export default new Vuex.Store({
         save(state, user) {
             state.loginUser = user;
         },
+        saveMenus(state, menus) {
+            state.menus = menus
+        },
         remove(state) {
             state.loginUser = {
                 name: '',
@@ -51,6 +54,7 @@ export default new Vuex.Store({
             status: 'FAIL',
             permissions: []
         },
+        menus: [],
         channelList: []
     },
     strict: process.env.NODE_ENV !== 'production',
