@@ -1,6 +1,6 @@
 <template>
     <section>
-        <el-row>
+        <el-row v-if='$route.path == "/channel"'>
             <el-col :span='6'>
                 <el-button @click="toShowDialog('0')" type='success' size='medium'><i class='el-icon-plus'></i>新建渠道</el-button>
             </el-col>
@@ -11,14 +11,23 @@
             </el-col>
         </el-row>
         <el-table :data='currentList'
-            ref="multipleTable"
+            ref="channelList"
             tooltip-effect="dark"
-            style="width: 100%">
+            style="width: 100%"
+            @select="saveChannel"
+            @select-all="saveChannel"
+            v-loading='loading'>
+            <el-table-column
+            type="selection"
+            width="55"
+            v-if='$route.path != "/channel"'>
+            </el-table-column>
             <el-table-column
             prop="id"
             align="center"
             label="ID"
-            width="60">
+            width="60"
+            v-if='$route.path == "/channel"'>
             </el-table-column>
             <el-table-column
             prop="name"
@@ -46,7 +55,8 @@
             prop="linkman"
             align="center"
             label="说明"
-            show-overflow-tooltip>
+            show-overflow-tooltip
+            v-if='$route.path == "/channel"'>
             </el-table-column>
             <el-table-column
             prop="pname"
@@ -60,7 +70,7 @@
             label="所属公司"
             show-overflow-tooltip>
             </el-table-column>
-            <el-table-column label='操作' width='250' align="center">
+            <el-table-column label='操作' width='250' align="center"  v-if='$route.path == "/channel"'>
                 <template slot-scope='scope'>
                     <el-dropdown @command='toShowDialog' trigger="click">
                         <el-button type='success' size='mini' @click="getRow(scope.row)">
@@ -69,7 +79,7 @@
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="3">编辑</el-dropdown-item>
-                            <el-dropdown-item command="1" v-if="ishow">新增子菜单</el-dropdown-item>
+                            <el-dropdown-item command="1" v-if="ishow">新增子渠道</el-dropdown-item>
                             <el-dropdown-item command="2">删除</el-dropdown-item>
                         </el-dropdown-menu>
                      </el-dropdown>
@@ -120,8 +130,12 @@
 
 <script>
 export default {
+    props: {
+        cid: [Number]
+    },
     data() {
         return {
+            loading: true,
             datalist:[],
             companyList:[],
             ishow3:true,
@@ -154,11 +168,24 @@ export default {
                 recordCount: 10
             },
             isAdd: '0',
-            pnameList: {}
+            pnameList: {},
+            selectedChannels: []
         }
     },
     methods: {
-         handleNodeClick(data) {
+        saveChannel(sel, item) {
+            let cids = []
+            sel.forEach((i) => {
+                cids.push(i.id)
+            })
+            cids = JSON.stringify(cids)
+            this.$emit('channelSelect', cids)
+        },
+        selectStatus(row, index) {
+            console.log(row, index, 'sellll')
+            return true
+        },
+        handleNodeClick(data) {
         },
         getRow(rowdata){
             this.Rowdata=rowdata
@@ -169,7 +196,6 @@ export default {
             }
             console.log('row',rowdata)
         },
-        
         toShowDialog(type){
             if(type=='0'){
                 //新建渠道
@@ -231,6 +257,7 @@ export default {
             this.$api.Channel.list(this.pager.pageNumber, res => {
                 const data = res.pager
                 if(data){
+                    let chosedChannel = []
                     this.currentList = data.dataList.map((i) => {
                         let pname = this.pnameList[Number(i.pid)]
                         let companyname=this.companyList[Number(i.companyid)]
@@ -246,9 +273,23 @@ export default {
                         else {
                             i.companyname = ' '
                         }
+                        if(this.selectedChannels.indexOf(i.id) >= 0) {
+                            chosedChannel.push(i)
+                        }
                         return i
                     })
-                    this.pager = data.pager
+                    this.$nextTick(() => {
+                        if(chosedChannel.length > 0) {
+                            chosedChannel.forEach((i) => {
+                                this.$refs.channelList.toggleRowSelection(i)
+                            })
+                        }
+                        else {
+                            this.$refs.channelList.toggleRowSelection()
+                        }
+                        this.pager = data.pager
+                        this.loading = false
+                    })
                 }
             })
         },
@@ -278,7 +319,6 @@ export default {
             this.getData()
         },
         toSaveChannel() {
-            console.log(this.isAdd)
             if(!this.msgContent.content.name) {
                 this.$message({
                     message: '渠道名称不能为空！',
@@ -349,6 +389,20 @@ export default {
                     })
                     
                 }
+                console.log(this.$route.path != '/channel')
+                if(this.$route.path != '/channel') {
+                    this.$api.Channel.getChannelPermission(this.cid, res =>{
+                        this.selectedChannels = []
+                        if(res.channels.length > 0) {
+                            res.channels.forEach((i) => {
+                                this.selectedChannels.push(i.channelid)
+                            })
+                        }
+                        this.getData()
+                    })
+                    return
+                }
+                this.getData()
             })
           
        },
@@ -358,9 +412,10 @@ export default {
         }
     },
     created() {
-        this.getData()
-        this.getAllData()
-        
+        this.getAllData()  
+        // this.$nextTick(() => {
+        //     this.getData()
+        // })
     }
 }
 </script>

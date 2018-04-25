@@ -103,5 +103,27 @@ export default {
      */
     delete(id, success) {
         http.get('channel/delete/' + id, success);
+    },
+    /**
+     * 绑定渠道权限
+     * @param {Number} id 用户id
+     * @param {String} ids 渠道ids
+     * @param {Function} success 成功回调
+     */
+    channelOfAccount(id, ids, success) {
+        http.postBody('user/setchannel', {
+            id: id,
+            grantIds: ids
+        }, success)
+    },
+    /**
+     * 获取渠道权限
+     * @param {Number} id 用户id
+     * @param {Function} success 成功回调
+     */
+    getChannelPermission(id, success) {
+        http.get('user/getchannels', {
+            uid: id
+        }, success)
     }
 }

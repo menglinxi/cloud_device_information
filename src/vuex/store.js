@@ -20,6 +20,9 @@ export default new Vuex.Store({
         saveMenus(state, menus) {
             state.menus = menus
         },
+        saveChannelstree(state, channels) {
+            state.channelstree = channels
+        },
         remove(state) {
             state.loginUser = {
                 name: '',
@@ -55,6 +58,7 @@ export default new Vuex.Store({
             permissions: []
         },
         menus: [],
+        channelstree: [],
         channelList: []
     },
     strict: process.env.NODE_ENV !== 'production',

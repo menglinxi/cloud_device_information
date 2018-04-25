@@ -10,9 +10,9 @@
             clearable
             @change="getChannels('parent')">
             <el-option
-              v-for="item in companyList"
+              v-for="item in channelstree"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -27,7 +27,7 @@
             <el-option
               v-for="item in pChannelList"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -41,7 +41,7 @@
             <el-option
               v-for="item in cChannelList"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   data() {
       return{
@@ -166,8 +168,12 @@ export default {
         }
       }
   },
+  computed: {
+    ...mapState(['channelstree'])
+  },
   methods: {
     getData() {
+      // 后端获取公司名称列表
       this.$api.UserMsg.company(res => {
         this.companyList = res.codes
           const obj = {
@@ -182,25 +188,40 @@ export default {
       })
     },
     getChannels(name) {
+      // 后端获取渠道信息
+      // if(name == 'parent') {
+      //   if(this.obj.companyid == '') {
+      //     this.obj.channelid = ''
+      //     this.obj.pchannelid = ''
+      //     return
+      //   }
+      //   let id = this.obj.companyid
+      //   this.$api.UserMsg.channelOfCompany(id, res => {
+      //     this.pChannelList = res.pager
+      //   })
+      // }
+      // else if(name == 'child') {
+      //   if(this.obj.pchannelid == '') {
+      //     this.obj.channelid = ''
+      //     return
+      //   }
+      //   let type = this.obj.pchannelid
+      //   this.$api.UserMsg.subOfChannel(type, res => {
+      //     this.cChannelList = res.pager
+      //   })
+      // }
       if(name == 'parent') {
-        if(this.obj.companyid == '') {
-          this.obj.channelid = ''
-          this.obj.pchannelid = ''
-          return
-        }
-        let id = this.obj.companyid
-        this.$api.UserMsg.channelOfCompany(id, res => {
-          this.pChannelList = res.pager
+        this.channelstree.forEach((i) => {
+          if(i.id == this.obj.companyid) {
+            this.pChannelList = i.child
+          }
         })
       }
       else if(name == 'child') {
-        if(this.obj.pchannelid == '') {
-          this.obj.channelid = ''
-          return
-        }
-        let type = this.obj.pchannelid
-        this.$api.UserMsg.subOfChannel(type, res => {
-          this.cChannelList = res.pager
+        this.pChannelList.forEach((i) => {
+          if(i.id == this.obj.pchannelid) {
+            this.cChannelList = i.child
+          }
         })
       }
     },
@@ -232,22 +253,22 @@ export default {
         this.$message.error('请选择搜索的父渠道名')
         return
       }
-      if(this.searchId == '') {
-        this.$message.error('请选择搜索的字段名')
-        return
-      }
-      if(this.searchKey == '') {
-        this.$message.error('请输入搜索的关键词')
-        return
-      }
-      if(this.searchId == 1) {
-        obj.name = this.searchKey
-        obj.moblie = ''
-      }
-      else if(this.searchId == 2) {
-        obj.moblie = this.searchKey
-        obj.name = ''
-      }
+      // if(this.searchId == '') {
+      //   this.$message.error('请选择搜索的字段名')
+      //   return
+      // }
+      // if(this.searchKey == '') {
+      //   this.$message.error('请输入搜索的关键词')
+      //   return
+      // }
+      // if(this.searchId == 1) {
+      //   obj.name = this.searchKey
+      //   obj.moblie = ''
+      // }
+      // else if(this.searchId == 2) {
+      //   obj.moblie = this.searchKey
+      //   obj.name = ''
+      // }
       if(obj.channelid == '') {
         obj.channelid = 0
       }
@@ -272,7 +293,16 @@ export default {
     }
   },
   created() {
-    this.getData()
+    // this.getData()
+    const obj = {
+        page: 1,
+        channelid: 0,
+        pchannelid: 0,
+        companyid: 0,
+        name: '',
+        moblie: ''
+      }
+    this.getList(obj)
   }
 }
 </script>

@@ -10,9 +10,9 @@
             clearable
             @change="getChannels('parent')">
             <el-option
-              v-for="item in companyList"
+              v-for="item in channelstree"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -27,7 +27,7 @@
             <el-option
               v-for="item in pChannelList"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -41,7 +41,7 @@
             <el-option
               v-for="item in cChannelList"
               :key="item.id"
-              :label="item.name"
+              :label="item.key"
               :value="item.id">
             </el-option>
           </el-select>
@@ -92,6 +92,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
     data() {
         return {
@@ -164,6 +166,9 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState(['channelstree'])
+    },
     methods: {
         getList(obj) {
             this.$api.Payment.payList(obj, res => {
@@ -182,6 +187,7 @@ export default {
             })
         },
         getData() {
+            // 后端获取公司名称列表
             this.$api.UserMsg.company(res => {
                 this.companyList = res.codes
                 const obj = {
@@ -196,25 +202,40 @@ export default {
             })
         },
         getChannels(name) {
+            // 后端获取渠道信息
+            // if(name == 'parent') {
+            //   if(this.obj.companyId == '') {
+            //     this.obj.channelid = ''
+            //     this.obj.pChannelId = ''
+            //     return
+            //   }
+            //   let id = this.obj.companyId
+            //   this.$api.UserMsg.channelOfCompany(id, res => {
+            //     this.pChannelList = res.pager
+            //   })
+            // }
+            // else if(name == 'child') {
+            //   if(this.obj.pChannelId == '') {
+            //     this.obj.channelid = ''
+            //     return
+            //   }
+            //   let type = this.obj.pChannelId
+            //   this.$api.UserMsg.subOfChannel(type, res => {
+            //     this.cChannelList = res.pager
+            //   })
+            // }
             if(name == 'parent') {
-                if(this.obj.companyId == '') {
-                    this.obj.pChannelId = ''
-                    this.obj.cChannelId = ''
-                    return
+                this.channelstree.forEach((i) => {
+                if(i.id == this.obj.companyId) {
+                    this.pChannelList = i.child
                 }
-                let id = this.obj.companyId
-                this.$api.UserMsg.channelOfCompany(id, res => {
-                    this.pChannelList = res.pager
                 })
             }
             else if(name == 'child') {
-                if(this.obj.pChannelId == '') {
-                    this.obj.cChannelId = ''
-                    return
+                this.pChannelList.forEach((i) => {
+                if(i.id == this.obj.pChannelId) {
+                    this.cChannelList = i.child
                 }
-                let id = this.obj.pChannelId
-                this.$api.UserMsg.subOfChannel(id, res => {
-                    this.cChannelList = res.pager
                 })
             }
         },
@@ -240,24 +261,24 @@ export default {
                 this.$message.error('请选择父渠道名称！')
                 return
             }
-            if(this.searchId == '') {
-                this.$message.error('请选择字段名！')
-                return
-            }
-            else {
-                if(this.searchKey == '') {
-                    this.$message.error('请输入搜索的关键词！')
-                    return
-                }
-                if(this.searchId == '1') {
-                    obj.orderid = this.searchKey
-                    obj.gamename = ''
-                }
-                else if(this.searchId == '2'){
-                    obj.gamename = this.searchKey
-                    obj.orderid = ''
-                }
-            }
+            // if(this.searchId == '') {
+            //     this.$message.error('请选择字段名！')
+            //     return
+            // }
+            // else {
+            //     if(this.searchKey == '') {
+            //         this.$message.error('请输入搜索的关键词！')
+            //         return
+            //     }
+            //     if(this.searchId == '1') {
+            //         obj.orderid = this.searchKey
+            //         obj.gamename = ''
+            //     }
+            //     else if(this.searchId == '2'){
+            //         obj.gamename = this.searchKey
+            //         obj.orderid = ''
+            //     }
+            // }
             if(this.obj.cChannelId == '') {
                 obj.cChannelId = 0
             }
@@ -282,7 +303,16 @@ export default {
         }
     },
     created() {
-        this.getData()
+        // this.getData()
+        const obj = {
+            page: 1,
+            companyId: 0,
+            pChannelId: 0,
+            cChannelId: 0,
+            gamename: '',
+            orderid: '' 
+        }
+        this.getList(obj)
     }
 }
 </script>

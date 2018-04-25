@@ -13,7 +13,7 @@
                 <el-button type="primary" icon="el-icon-fa-plus" @click="addUser" size="small">添加用户</el-button>
             </el-col>
         </el-row>
-        <el-table :data="pager.dataList" border stripe style="width: 100%">
+        <el-table :data="pager.dataList" border stripe style="width: 100%" v-loading='loading'>
             <el-table-column prop="id" label="ID" header-align="center" align="center" width="55">
             </el-table-column>
             <el-table-column prop="name" label="用户名" show-overflow-tooltip header-align="center" align="center">
@@ -44,6 +44,8 @@
                                    @click="handleGrant(scope.$index,scope.row,'role')"></el-button>
                         <el-button title="用户授权" size="mini" type="primary" icon="el-icon-fa-bolt"
                                    @click="handleGrant(scope.$index,scope.row,'permission')"></el-button>
+                        <el-button title="渠道授权" size="mini" type="primary" icon="el-icon-fa-refresh"
+                                   @click="handleChannel(scope.$index,scope.row)"></el-button>
                         <!-- <el-button title="Token列表" size="mini" type="primary" icon="el-icon-tickets"
                                    @click="tokenList(scope.$index,scope.row,'permission')"></el-button> -->
                     </el-button-group>
@@ -121,15 +123,23 @@
                 <el-button type="primary" @click="grant">确 定</el-button>
             </div>
         </el-dialog>
-
+        <el-dialog title='设置渠道权限' :visible.sync="channelShow">
+            <Channel :cid='userId' @channelSelect='saveChannel' v-if='channelShow'></Channel>
+            <div slot='footer' class='dialog-footer'>
+                <el-button @click="channelShow = false">取 消</el-button>
+                <el-button type="primary" @click="updateChannel">确 定</el-button>
+            </div>
+        </el-dialog>
     </section>
 </template>
 <script>
     import moment from "moment";
+    import Channel from '../account/Channel';
 
     export default {
         data() {
             return {
+                loading: true,
                 searchKey: "",
                 pager: {
                     pager: {
@@ -155,8 +165,14 @@
                     phone: "",
                     email: ""
                 },
-                formLabelWidth: "100px"
+                userId: 0,
+                formLabelWidth: "100px",
+                channelShow: false,
+                selectedChannel: ''
             };
+        },
+        components: {
+            Channel
         },
         computed: {
             dialogWidth() {
@@ -215,6 +231,23 @@
                 this.user.name = row.name;
                 this.resetShow = true;
             },
+            handleChannel(index, item) {
+                this.userId = item.id
+                this.channelShow = true
+            },
+            saveChannel(ids) {
+                console.log('ids', ids)
+                this.selectedChannel = ids
+            },
+            updateChannel() {
+                console.log('selc', this.selectedChannel)
+                this.$api.Channel.channelOfAccount(this.userId, this.selectedChannel, res => {
+                    if(res) {
+                        this.$message.success('渠道授权成功~~~')
+                    }
+                    this.channelShow = false
+                })
+            },
             // tokenList(index,row){
             //     this.$router.push({
             //         path:'/user_token',
@@ -231,11 +264,13 @@
                 }
             },
             doSearch() {
+                this.loading = true
                 this.$api.User.search(
                     this.pager.pager.pageNumber,
                     this.searchKey,
                     result => {
                         this.pager = result.pager;
+                        this.loading = false
                     }
                 );
             },
@@ -322,6 +357,7 @@
                 this.$api.User.list(this.pager.pager.pageNumber, result => {
                     console.log(result)
                     this.pager = result.pager;
+                    this.loading = false
                 });
             }
         },
