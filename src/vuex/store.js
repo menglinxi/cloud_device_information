@@ -5,8 +5,8 @@ import createPersistedState from 'vuex-persistedstate'
 Vue.use(Vuex)
 export default new Vuex.Store({
     actions: {
-        getChannel({commit}) {
-            Vue.prototype.$api.Channel.allList(result => {
+        getChannel({commit, data}) {
+            Vue.prototype.$api.Channel.allList(0, result => {
                 if(result.pager) {
                     commit('saveChannelList', result.pager)
                 }
