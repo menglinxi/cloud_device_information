@@ -211,6 +211,11 @@ export default {
       //   })
       // }
       if(name == 'parent') {
+        if(this.obj.companyid == '') {
+          this.obj.channelid = ''
+          this.obj.pchannelid = ''
+          return
+        }
         this.channelstree.forEach((i) => {
           if(i.id == this.obj.companyid) {
             this.pChannelList = i.child
@@ -218,6 +223,10 @@ export default {
         })
       }
       else if(name == 'child') {
+        if(this.obj.pchannelid == '') {
+          this.obj.channelid = ''
+          return
+        }
         this.pChannelList.forEach((i) => {
           if(i.id == this.obj.pchannelid) {
             this.cChannelList = i.child

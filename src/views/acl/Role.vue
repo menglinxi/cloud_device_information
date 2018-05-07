@@ -266,12 +266,14 @@
                     this.$api.Role.roleMenuList(row.id, res => {
                         this.expandedKeys = []
                         this.checkedKeys = []
-                        res.menus.forEach((i) => {
-                            this.expandedKeys.push(i.id)
-                            i.child.forEach((j) => {
-                                this.checkedKeys.push(j.id)
+                        if(res.menus) {
+                            res.menus.forEach((i) => {
+                                this.expandedKeys.push(i.id)
+                                i.child.forEach((j) => {
+                                    this.checkedKeys.push(j.id)
+                                })
                             })
-                        })
+                        }
                         this.menuShow = true
                     })
                 })

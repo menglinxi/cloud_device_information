@@ -203,40 +203,36 @@ export default {
         },
         getChannels(name) {
             // 后端获取渠道信息
-            // if(name == 'parent') {
-            //   if(this.obj.companyId == '') {
-            //     this.obj.channelid = ''
-            //     this.obj.pChannelId = ''
-            //     return
-            //   }
+            if(name == 'parent') {
+              if(this.obj.companyId == '') {
+                this.obj.pChannelId = ''
+                this.obj.cChannelId = ''
+                return
+              }
+              this.channelstree.forEach((i) => {
+                    if(i.id == this.obj.companyId) {
+                        this.pChannelList = i.child
+                    }
+                })
             //   let id = this.obj.companyId
             //   this.$api.UserMsg.channelOfCompany(id, res => {
             //     this.pChannelList = res.pager
             //   })
-            // }
-            // else if(name == 'child') {
-            //   if(this.obj.pChannelId == '') {
-            //     this.obj.channelid = ''
-            //     return
-            //   }
+            }
+            else if(name == 'child') {
+              if(this.obj.pChannelId == '') {
+                this.obj.cChannelId = ''
+                return
+              }
+              this.pChannelList.forEach((i) => {
+                    if(i.id == this.obj.pChannelId) {
+                        this.cChannelList = i.child
+                    }
+                })
             //   let type = this.obj.pChannelId
             //   this.$api.UserMsg.subOfChannel(type, res => {
             //     this.cChannelList = res.pager
             //   })
-            // }
-            if(name == 'parent') {
-                this.channelstree.forEach((i) => {
-                if(i.id == this.obj.companyId) {
-                    this.pChannelList = i.child
-                }
-                })
-            }
-            else if(name == 'child') {
-                this.pChannelList.forEach((i) => {
-                if(i.id == this.obj.pChannelId) {
-                    this.cChannelList = i.child
-                }
-                })
             }
         },
         getSearch() {
