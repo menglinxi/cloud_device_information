@@ -40,6 +40,16 @@
                     <el-button size='mini' type='primary' plain style='margin-left:15px;' class='dlbtn' :data-clipboard-text='scope.row.dlurl'>复制</el-button>
                 </template>
             </el-table-column>
+            <el-table-column prop='hgame' label='推荐游戏' align='center'>
+                <template slot-scope='scope'>
+                    <div  style="display:flex; flex-direction: row;justify-content: center;">
+                        <img :src='scope.row.hotimg' v-if='scope.row.ishot' width='50px' height="50px" style='margin-right: 15px;'/>
+                        <el-button @click='toSetHot(scope.row.id, scope.row.hotimg)' v-if='scope.row.ishot' type='success' style="margin-top: 15px; margin-bottom: 10px;" size='mini'>修改</el-button>
+                        <el-button @click='cancelHot(scope.row.id)' v-if='scope.row.ishot' type='warning' style="margin-top: 15px; margin-bottom: 10px;" size='mini'>取消</el-button>
+                        <el-button @click='toSetHot(scope.row.id)' v-if='!scope.row.ishot' type='success' style="margin-top: 15px; margin-bottom: 10px;" size='mini'>添加</el-button>
+                    </div>
+                </template>
+            </el-table-column>
             <el-table-column prop='createtime' label='添加日期' width='160' align='center'></el-table-column>
             <el-table-column label='操作' width='200' align="center">
                 <template slot-scope='scope'>
@@ -83,7 +93,6 @@
                 <el-form-item label='包名'>
                     <el-input v-model='msgContent.content.apkpackage'></el-input>
                 </el-form-item>
-
                 <el-form-item label='所属渠道'>
                     <el-select v-model="msgContent.content.channel" filterable placeholder="请选择渠道">
                         <el-option
@@ -99,6 +108,19 @@
                 <el-button @click='toSave' type='success'>保存</el-button>
                 <el-button @click='msgContent.isShowContent = false' type='text'>取消</el-button>
             </div>
+        </el-dialog>
+        <el-dialog title='设置推荐游戏' :visible.sync="showHot" width="600px" @close='showHot = false'>
+            <div class='line'>
+                <div class='title'>游戏图片：</div>
+                <img :src='imgurl' width='50px' height="50px" v-if='imgurl' style='margin-right: 15px;'/>
+                <el-button @click='openImg' type='primary' plain size='small' style="margin-top: 15px; margin-bottom: 15px;">上传本地图片</el-button>
+            </div>
+            <div class='line'>
+                <div class='title'>图片url：</div>
+                <el-input v-model='imgurl' size='small' style='width: 350px'></el-input>
+            </div>
+            <el-button @click='setHot' type='success' size='small' style='margin-left: 20px'>设置推荐</el-button>
+            <input id='upIpt' @change='setImg' style='visibility: hidden' type='file'/>
         </el-dialog>
     </section>
 </template>
@@ -129,7 +151,10 @@ export default {
                 pageSize: 10,
                 recordCount: 10
             },
-            isAdd: true
+            isAdd: true,
+            currentId: 0,
+            showHot: false,
+            imgurl: ''
         }
     },
     computed: {
@@ -149,7 +174,6 @@ export default {
             })            
         },
         searchGame() {
-            console.log('aaa')
             if(!this.chosedChannelId && this.searchMsg) {
                 this.searchMsg = ''
                 this.getData()
@@ -291,6 +315,53 @@ export default {
                 message: '图片上传失败，请重新上传！',
                 type: 'error'
             })
+        },
+        toSetHot(id, url) {
+            this.showHot = true
+            this.currentId = id
+            this.imgurl = ''
+            if(url) {
+                this.imgurl = url
+            }
+        },
+        cancelHot(id) {
+            this.$api.Game.cancelHot(id, res => {
+                if(res) {
+                    this.$message.success('取消推荐成功~~~')
+                    this.getData()
+                }
+                else {
+                    this.$message.error('取消推荐失败~~~')
+                }
+            })
+        },
+        openImg() {
+            let ipt = document.getElementById('upIpt');
+            ipt.click()
+        },
+        setImg() {
+            let file = document.getElementById('upIpt').files;
+            let formD = new FormData();
+            formD.append('file', file[0]);
+            this.$api.Img.uploadImg(formD, res => {
+                this.imgurl = res.url
+            })
+        },
+        setHot() {
+            if(this.imgurl == '') {
+                this.$message.error('图片url不能为空~~~')
+                return
+            }
+            this.$api.Game.setHot(this.currentId, this.imgurl, res => {
+                if(res) {
+                    this.$message.success('推荐设置成功~~~')
+                    this.showHot = false
+                    this.getData()
+                }
+                else {
+                    this.$message.error('推荐设置失败~~~')
+                }
+            })
         }
     },
     mounted() {
@@ -335,5 +406,13 @@ export default {
 }
 .preIpt{
     width: 130px;
+}
+.line{
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    .title{
+        width: 120px;
+    }
 }
 </style>

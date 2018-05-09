@@ -25,6 +25,7 @@ import Trace from "./monitor/trace";
 import Branch from "./department/branch";
 import Department from "./department/department";
 
+import Img from "./img/img";
 export default {
   User: User,
   Token: Token,
@@ -43,5 +44,6 @@ export default {
   APM: APM,
   Trace: Trace,
   Branch: Branch,
-  Department: Department
+  Department: Department,
+  Img: Img
 };

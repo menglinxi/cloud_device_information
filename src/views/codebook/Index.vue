@@ -180,7 +180,7 @@
                             item.children = [{}];
                             item.depth = 1;
                         });
-                        this.loading = true
+                        this.loading = false
                     }
                 );
             },

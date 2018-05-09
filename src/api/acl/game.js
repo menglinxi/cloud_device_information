@@ -68,5 +68,27 @@ export default {
             channelid: channelid,
             page: page
         }, success);
-    }
+    },
+    /**
+     * 设置推荐
+     * @param {number} id ID
+     * @param {string} hotimg 推荐图片url
+     * @param {Function} success 成功回调
+     */
+    setHot(id, hotimg, success) {
+        http.get('games/sethot', {
+            id: id,
+            hotimg: hotimg
+        }, success)
+    },
+    /**
+     * 取消推荐
+     * @param {number} id ID
+     * @param {Function} success 成功回调
+     */
+    cancelHot(id, success) {
+        http.get('games/unsethot', {
+            id: id
+        }, success)
+    },
 }

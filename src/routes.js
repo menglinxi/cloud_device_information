@@ -22,6 +22,8 @@ import iosDevice from './views/acl/iosDevice'
 import DataContent from './views/mission/dataContent'
 import MissionList from './views/mission/missionList'
 
+import ImgList from './views/img/ImgList'
+
 import CodeBook from './views/codebook/Index.vue'
 import CodeBookGroup from './views/codebook/Group.vue'
 
@@ -231,6 +233,24 @@ let routes = [
       meta: {
         requiresAuth: true
       },
+    }]
+  },
+  {
+    path: '/',
+    component: Home,
+    name: '图片管理',
+    iconCls: 'el-icon-picture-online',
+    meta: {
+      requiresAuth: true
+    },
+    children: [{
+      path: '/img_list',
+      component: ImgList,
+      iconCls: 'el-icon-picture',
+      name: '图片列表',
+      meta: {
+        requiresAuth: true
+      }
     }]
   },
   {
