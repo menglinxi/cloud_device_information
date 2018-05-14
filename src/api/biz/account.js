@@ -77,5 +77,13 @@ export default {
             ids: id,
             channelid: channelId
         }, success)
+    },
+    /**
+     * 上传txt文件
+     * @param {Object} txt txt文件
+     * @param {Function} success 成功回调
+     */
+    uploadTxt(txt, success) {
+        http.postBody('/account/uploadtxt', txt, success)
     }
 }

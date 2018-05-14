@@ -2,7 +2,8 @@
     <section>
         <el-row>
             <el-col :span='6'>
-                <el-button @click='toShowDialog(0)' type='success' size='medium'><i class='el-icon-plus'></i>新建账号</el-button>
+                <el-button @click='toShowDialog(0)' type='success' size='medium'><i class='el-icon-plus' style='margin-right: 10px'></i>新建账号</el-button>
+                <el-button @click='uploadTxt(1)' type='warning' size='medium' plain><i class='el-icon-tickets' style='margin-right: 10px'></i>导入TXT文件</el-button>
                 <el-button v-if='tableName == "nochannel"' @click='toShowDialog(2)' type='primary' size='medium'><i class='el-icon-more'></i>批量分配渠道</el-button> 
             </el-col>
             <el-col :offset='12' :span='6'>
@@ -121,6 +122,7 @@
                 <el-button @click='isShowContent = false' type='text'>取消</el-button>
             </div>
         </el-dialog>
+        <input style='visibility: hidden' type='file' id='ipt' @change='uploadTxt(2)'/>
     </section>
 </template>
 
@@ -351,6 +353,23 @@ export default {
         handlePage(e) {
             this.pager.pageNumber = e
             this.getData()
+        },
+        uploadTxt(num) {
+            console.log('txt', num)
+            let ipt = document.getElementById('ipt');
+            if(num == 1) {
+                ipt.click();
+            }
+            else if(num == 2) {
+                let file = ipt.files
+                let formD = new FormData()
+                formD.append('file', file[0])
+                console.log(file, formD)
+                this.$api.Account.uploadTxt(formD, res => {
+                    this.$message.success('导入成功~~~')
+                    this.getData()
+                })
+            }
         }
     },
     created() {

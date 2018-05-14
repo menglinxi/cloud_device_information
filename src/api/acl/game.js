@@ -25,7 +25,8 @@ export default {
             pic: obj.pic,
             dlurl: obj.dlurl,
             channel: obj.channel,
-            apkpackage:obj.apkpackage
+            apkpackage:obj.apkpackage,
+            sort: obj.sort
         }, success);
     },
     /**
@@ -44,7 +45,8 @@ export default {
             pic: obj.pic,
             dlurl: obj.dlurl,
             channel: obj.channel,
-            apkpackage:obj.apkpackage
+            apkpackage:obj.apkpackage,
+            sort: obj.sort
         }, success);
     },
     /**

@@ -32,12 +32,12 @@
                          unique-opened router
                          :collapse="collapsed">
                     <template v-for="(item,index) in menus">
-                        <el-menu-item v-if="item.child.length == 1" :index="item.child[0].value" :key="index">
-                            <!-- <i :class="item.iconCls || item.children[0].iconCls"></i> -->
+                        <!-- <el-menu-item v-if="item.child.length == 1" :index="item.child[0].value" :key="index">
+                            <i :class="item.iconCls || item.children[0].iconCls"></i>
                             <i class='title-icon' v-if='collapsed'>{{item.child[0].key.substring(0, 1)}}</i>
                             <span slot="title">{{item.child[0].key}}</span>
-                        </el-menu-item>
-                        <el-submenu v-else :index="index + ''" :key="index">
+                        </el-menu-item> -->
+                        <el-submenu :index="index + ''" :key="index">
                             <template slot="title">
                                 <!-- <i :class="item.iconCls"></i> -->
                                 <i class='title-icon' v-if='collapsed'>{{item.key.substring(0, 1)}}</i>

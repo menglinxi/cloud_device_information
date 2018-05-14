@@ -56,7 +56,7 @@
             <el-upload
                 :class='[isShowDay? "mt20" : ""]'
                 class="upload-demo"
-                action="api/datatask/uploadexl"
+                action="datatask/uploadexl"
                 :on-success="getNewData"
                 :show-file-list=false
                 :data='curTaskId'>

@@ -206,7 +206,7 @@
                 title='上传本地数据'>
                 <el-upload
                     class="upload-demo"
-                    action="api/datatask/uploadexl"
+                    action="datatask/uploadexl"
                     :on-success="getTaskData"
                     :data='chosedId'>
                     <el-button size="small" type="primary">点击上传</el-button>

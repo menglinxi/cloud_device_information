@@ -18,7 +18,8 @@
                 </el-input>
             </el-col>
         </el-row>
-        <el-table :data='gameList'>
+        <el-table :data='dataList'>
+            <el-table-column prop='sort' label='序号' width='60' align='center'></el-table-column>
             <el-table-column prop='gamename' label='游戏名称' width='160' align='center'></el-table-column>
             <el-table-column prop='channelobj.name' label='所属渠道' width='160' align='center'></el-table-column>
             <el-table-column prop='channelobj.code' label='渠道码' width='180' align='center'></el-table-column>
@@ -59,6 +60,7 @@
             </el-table-column>
         </el-table>
         <el-pagination
+            style='text-align: center'
             v-if='pager.recordCount > 10' 
             :total="pager.recordCount"
             :page-size="pager.pageSize" 
@@ -92,6 +94,9 @@
                 </el-form-item>
                 <el-form-item label='包名'>
                     <el-input v-model='msgContent.content.apkpackage'></el-input>
+                </el-form-item>
+                <el-form-item label='序号'>
+                    <el-input v-model='msgContent.content.sort' placeholder="序号越小越靠前显示"></el-input>
                 </el-form-item>
                 <el-form-item label='所属渠道'>
                     <el-select v-model="msgContent.content.channel" filterable placeholder="请选择渠道">
@@ -143,7 +148,8 @@ export default {
                     pic: '',
                     dlurl: '',
                     channel: '',
-                    apkpackage:''
+                    apkpackage:'',
+                    sort: ''
                 }
             },
             pager: {
@@ -160,7 +166,17 @@ export default {
     computed: {
         ...mapState({
             channelList: state => state.channelList
-        })
+        }),
+        dataList() {
+            let list = this.gameList.sort((a, b) => {
+                return a.sort - b.sort;
+            })
+            list = list.map((e) => {
+                e.sort = e.sort.toString()
+                return e
+            })
+            return list
+        }
     },
     methods: {
         getData() {
@@ -211,7 +227,8 @@ export default {
                                         pic: '',
                                         dlurl: '',
                                         channel: '',
-                                        apkpackage:''
+                                        apkpackage:'',
+                                        sort: 0
                                     }
         },
         toEdit(item) {
@@ -252,7 +269,8 @@ export default {
                     pic: '',
                     dlurl: '',
                     channel: '',
-                    apkpackage:''
+                    apkpackage:'',
+                    sort: 0
                 }
             }
             this.getData()
