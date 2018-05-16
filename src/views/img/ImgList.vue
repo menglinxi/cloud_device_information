@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class='top-banner'>
-            <el-button @click='toAddImg' type='success' size='small'>添加图片</el-button>
+            <el-button @click='toAddImg' type='success' size='small'>添加资源</el-button>
         </div>
         <div class='img-content'>
             <div class='img' v-for='(i, index) in imgList' :key='index'>
@@ -16,7 +16,7 @@
         <el-dialog :visible.sync="showImg" width='600px' @close='showImg = false' title='添加图片'>
             <div class='line'>
                 <div class='title'>
-                    图片： 
+                    资源： 
                 </div>
                 <div class='img-item'>
                     <i class='el-icon-upload upload-btn' @click='openImg' v-if='!imgurl'></i>
@@ -26,7 +26,7 @@
             </div>
             <div class='line'>
                 <div class='title'>
-                    图片url:
+                    url:
                 </div>
                 <el-input style='width: 300px;' v-model='imgurl' size='small'></el-input>
             </div>

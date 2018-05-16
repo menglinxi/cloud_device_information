@@ -90,7 +90,7 @@
   <el-dialog :title="msgtitle" :visible.sync="dialogFormVisible">
   <el-form :model="form">
     <el-form-item label="token" :label-width="formLabelWidth">
-      <el-input :disabled="msgtitle=='编辑'" v-model="form.token"></el-input>
+      <el-input :disabled="true" v-model="form.token"></el-input>
     </el-form-item>
     <el-form-item label="时间" :label-width="formLabelWidth">
       <el-date-picker
@@ -190,9 +190,7 @@ export default {
   },
   methods: {
     yanzheng() {
-      if (this.form.token != "" && this.form.token) {
-        return true;
-      } else if (this.form.startday != "" && this.form.startday) {
+      if (this.form.startday != "" && this.form.startday) {
         return true;
       } else if (this.form.endday != "" && this.form.endday) {
         return true;
@@ -241,7 +239,7 @@ export default {
       formdata.totaltime = this.form.totaltime;
       formdata.usetime = this.form.usetime;
       if (this.msgtitle == "添加") {
-        formdata.token = this.form.token;
+        formdata.token = Math.random()
         formdata.status = this.form.status;
         formdata.power = this.form.power;
         formdata.moneytype = this.form.moneytype;
@@ -263,7 +261,9 @@ export default {
     },
     addItem() {
       this.msgtitle = "添加";
-      this.form = {};
+      this.form = {
+        token: Math.floor(Math.random()*100000000)
+      };
       this.dialogFormVisible = true;
     },
     getList() {

@@ -17,7 +17,7 @@ export default {
      * @param {Function} success 成功回调
      */
     uploadImg(file, success) {
-        http.postBody('image/uploadimg', file, success)
+        http.postBody('image/upfile', file, success)
     },
     /**
      * 添加图片

@@ -14,6 +14,8 @@
     <el-table :data="tableData" border style="width: 100%" v-loading='loading'>
       <el-table-column prop="AndroidId" label="AndroidID">
       </el-table-column>
+      <el-table-column prop="taskid" label="任务ID">
+      </el-table-column>
       <el-table-column prop="Line1Number" label="手机号码">
       </el-table-column>
       <el-table-column prop="NetworkType" label="网络模式">
