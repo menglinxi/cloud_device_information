@@ -68,7 +68,7 @@
             layout="prev, pager, next" 
             @current-change='handlePage'>
         </el-pagination>
-        <el-dialog :title='msgContent.title' :visible.sync="msgContent.isShowContent" width='500px' @close='toCancel'>
+        <el-dialog :title='msgContent.title' :visible.sync="isShowContent" width='500px' @close='toCancel'>
             <el-form ref='form' :model='msgContent.content' label-width='100px'>
                 <el-form-item label='游戏名称'>
                     <el-input v-model='msgContent.content.gamename'></el-input>
@@ -93,7 +93,7 @@
                     <el-input v-model='msgContent.content.dlurl'></el-input>
                 </el-form-item>
                 <el-form-item label='包名'>
-                    <el-input v-model='msgContent.content.apkpackage'></el-input>
+                    <el-input v-model='msgContent.content.apkpackage' disabled></el-input>
                 </el-form-item>
                 <el-form-item label='序号'>
                     <el-input v-model='msgContent.content.sort' placeholder="序号越小越靠前显示"></el-input>
@@ -111,7 +111,7 @@
             </el-form>
             <div slot='footer'>
                 <el-button @click='toSave' type='success'>保存</el-button>
-                <el-button @click='msgContent.isShowContent = false' type='text'>取消</el-button>
+                <el-button @click='toCancel' type='text'>取消</el-button>
             </div>
         </el-dialog>
         <el-dialog title='设置推荐游戏' :visible.sync="showHot" width="600px" @close='showHot = false'>
@@ -140,9 +140,9 @@ export default {
             gameList: [],
             searchMsg: '',
             chosedChannelId: '',
+            isShowContent: false,
             msgContent: {
                 title: '',
-                isShowContent: false,
                 content: {
                     gamename: '',
                     pic: '',
@@ -176,6 +176,12 @@ export default {
                 return e
             })
             return list
+        }
+    },
+    watch: {
+        "msgContent.content.dlurl"(val) {
+            let durl = val.split("_")
+            this.msgContent.content.apkpackage = durl[durl.length-2]
         }
     },
     methods: {
@@ -220,7 +226,7 @@ export default {
         },
         toAdd() {
             this.isAdd = true
-            this.msgContent.isShowContent = true
+            this.isShowContent = true
             this.msgContent.title = '新建游戏'
             this.msgContent.content = {
                                         gamename: '',
@@ -233,7 +239,7 @@ export default {
         },
         toEdit(item) {
             this.isAdd = false
-            this.msgContent.isShowContent = true
+            this.isShowContent = true
             this.msgContent.title = '编辑游戏'
             this.msgContent.content = item
         },
@@ -249,7 +255,7 @@ export default {
                             type: 'success'
                         }) 
                         this.pager.pageNumber = 1
-                        this.msgContent.isShowContent = false
+                        this.isShowContent = false
                         this.getData() 
                     }                    
                 })
@@ -285,7 +291,7 @@ export default {
                         })
                         this.pager.pageNumber = 1
                     }        
-                    this.msgContent.isShowContent = false
+                    this.isShowContent = false
                 })
             }
             else {
@@ -297,7 +303,7 @@ export default {
                         })
                         this.pager.pageNumber = 1
                     }   
-                    this.msgContent.isShowContent = false   
+                    this.isShowContent = false   
                 })
             }
             
