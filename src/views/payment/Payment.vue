@@ -81,10 +81,10 @@
               </el-table-column>
           </el-table>
           <el-pagination
-            v-if='pager.pageCount > 10'
-            :current-page="pager.pageNumber"
+            v-if='pager.pageSize > 15'
+            :current-page="pager.pageCount"
             layout="prev, pager, next"
-            :total="pager.pageCount"
+            :total="pager.pageSize"
             @current-change='handlePage'>
         </el-pagination>
       </div>
@@ -249,34 +249,31 @@ export default {
                 return
             }
             let obj = this.obj
-            if(this.obj.companyId == '') {
-                this.$message.error('请选择公司名称！')
+            if(this.obj.companyId == '' && this.searchId == '') {
+                this.$message.error('请选择查询内容')
                 return
             }
-            if(this.obj.pChannelId == '') {
-                this.$message.error('请选择父渠道名称！')
-                return
+            if(this.searchId != '') {
+                if(this.searchKey == '') {
+                    this.$message.error('请填写搜索内容~~~')
+                    return
+                }
+                else {
+                    switch(this.searchId) {
+                        case '1':
+                            obj.orderid = this.searchKey;
+                            obj.gamename = '';
+                            break;
+                        case '2':
+                            obj.gamename = this.searchKey;
+                            obj.orderid = '';
+                            break;
+                    }
+                }
             }
-            // if(this.searchId == '') {
-            //     this.$message.error('请选择字段名！')
-            //     return
-            // }
-            // else {
-            //     if(this.searchKey == '') {
-            //         this.$message.error('请输入搜索的关键词！')
-            //         return
-            //     }
-            //     if(this.searchId == '1') {
-            //         obj.orderid = this.searchKey
-            //         obj.gamename = ''
-            //     }
-            //     else if(this.searchId == '2'){
-            //         obj.gamename = this.searchKey
-            //         obj.orderid = ''
-            //     }
-            // }
-            if(this.obj.cChannelId == '') {
-                obj.cChannelId = 0
+            else {
+                obj.orderid = '';
+                obj.gamename = '';
             }
             this.getList(obj)
         },

@@ -235,7 +235,42 @@ export default {
       }
     },
     getList(obj) {
-      this.$api.UserMsg.list(obj, res => {
+      let objn = obj
+      if(obj.companyid == '') {
+        objn = {
+          page: obj.page,
+          companyid: 0,
+          pchannelid: 0,
+          channelid: 0,
+          name: obj.name,
+          moblie: obj.moblie
+        }
+      }
+      else {
+        if(obj.pchannelid == '') {
+          objn = {
+            page: obj.page,
+            companyid: obj.companyid,
+            pchannelid: 0,
+            channelid: 0,
+            name: obj.name,
+            moblie: obj.moblie
+          }
+        }
+        else {
+          if(obj.channelid == '') {
+            objn = {
+              page: obj.page,
+              companyid: obj.companyid,
+              pchannelid: obj.pchannelid,
+              channelid: 0,
+              name: obj.name,
+              moblie: obj.moblie
+            }
+          }
+        }
+      }
+      this.$api.UserMsg.list(objn, res => {
         this.dataList = res.account.dataList
         this.pager = res.account.pager
       })
@@ -247,39 +282,44 @@ export default {
               companyid: 0,
               pchannelid: 0,
               channelid: 0,
-              gamename: '',
-              orderid: '' 
+              name: '',
+              mobile: '' 
           }
           this.getList(objn)
           return
       }
       let obj = this.obj
-      if(this.obj.companyid == '') {
-        this.$message.error('请选择搜索的公司名')
-        return
+      if(this.obj.companyid != '') {
+        if(this.obj.pchannelid == '') {
+          this.$message.error('请选择父渠道！')
+          return
+        }
       }
-      if(this.obj.pchannelid == '') {
-        this.$message.error('请选择搜索的父渠道名')
-        return
+      if(this.obj.companyid == '' && this.searchId == '') {
+          this.$message.error('请选择查询内容')
+          return
       }
-      // if(this.searchId == '') {
-      //   this.$message.error('请选择搜索的字段名')
-      //   return
-      // }
-      // if(this.searchKey == '') {
-      //   this.$message.error('请输入搜索的关键词')
-      //   return
-      // }
-      // if(this.searchId == 1) {
-      //   obj.name = this.searchKey
-      //   obj.moblie = ''
-      // }
-      // else if(this.searchId == 2) {
-      //   obj.moblie = this.searchKey
-      //   obj.name = ''
-      // }
-      if(obj.channelid == '') {
-        obj.channelid = 0
+      if(this.searchId != '') {
+          if(this.searchKey == '') {
+              this.$message.error('请填写搜索内容~~~')
+              return
+          }
+          else {
+              switch(this.searchId) {
+                  case 1:
+                      obj.name = this.searchKey;
+                      obj.moblie = '';
+                      break;
+                  case 2:
+                      obj.moblie = this.searchKey;
+                      obj.name = '';
+                      break;
+              }
+          }
+      }
+      else {
+          obj.name = '';
+          obj.moblie = '';
       }
       this.getList(obj)
     },
