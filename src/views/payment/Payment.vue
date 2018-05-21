@@ -75,16 +75,17 @@
                 width='100'
                 align="center">
                   <template slot-scope="scope">
-                      <el-tag type='success' size='small' v-if='scope.row.status == 1'>支付成功</el-tag>
-                      <el-tag type='danger' size='small' v-if='scope.row.status == 0'>支付失败</el-tag>
+                      <el-tag type='success' size='small' v-if='scope.row.status'>支付成功</el-tag>
+                      <el-tag type='danger' size='small' v-if='!scope.row.status'>支付失败</el-tag>
                   </template>
               </el-table-column>
           </el-table>
           <el-pagination
-            v-if='pager.pageSize > 15'
+            style='text-align: center; margin-top: 10px;'
+            v-if='pager.recordCount > 15'
             :current-page="pager.pageCount"
             layout="prev, pager, next"
-            :total="pager.pageSize"
+            :total="pager.recordCount"
             @current-change='handlePage'>
         </el-pagination>
       </div>
@@ -123,7 +124,7 @@ export default {
                 {
                     prop: 'gamecode',
                     label: '游戏代号',
-                    width: '100'
+                    width: ''
                 },
                 {
                     prop: 'pkg',
@@ -133,17 +134,17 @@ export default {
                 {
                     prop: 'gamename',
                     label: '游戏名称',
-                    width: '140'
+                    width: ''
+                },
+                {
+                    prop: 'gamecode',
+                    label: '游戏渠道码',
+                    width: ''
                 },
                 {
                     prop: 'app_channel',
-                    label: '游戏渠道码',
-                    width: '160'
-                },
-                {
-                    prop: 'userchannel',
                     label: '用户渠道码',
-                    width: '160'
+                    width: ''
                 },
                 {
                     prop: 'createtime',
@@ -172,11 +173,11 @@ export default {
     methods: {
         getList(obj) {
             this.$api.Payment.payList(obj, res => {
-                this.payList = res.pager.dataList.map((i) => {
-                    i.code = i.status == '1' ? true : false
+                this.payList = res.account.dataList.map((i) => {
+                    i.status = i.status == 1 ? true : false
                     return i
                 })
-                this.pager = res.pager.pager
+                this.pager = res.account.pager
             })
         },
         changeStatus(item) {

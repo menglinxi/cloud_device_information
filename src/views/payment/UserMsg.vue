@@ -72,6 +72,24 @@
           :width='item.width'
           align="center">
         </el-table-column>
+        <el-table-column
+          prop='status'
+          label='用户状态'
+          align='center'
+          width='100'>
+          <template slot-scope="scope">
+            <el-tag size='small' type='success' v-if='!scope.row.isstop'>启用中</el-tag>
+            <el-tag size='small' type='danger' v-if='scope.row.isstop'>已停用</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label='操作'
+          width='100'>
+          <template slot-scope="scope">
+            <el-button size='mini' type='success' plain v-if='scope.row.isstop' @click='userStatus(scope.row, 0)'>启用</el-button>
+            <el-button size='mini' type='danger' plain v-if='!scope.row.isstop' @click='userStatus(scope.row, 1)'>停用</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         v-if='pager.pageCount > 10'
@@ -111,11 +129,11 @@ export default {
             label: 'ID',
             width: '60'
           },
-          {
-            prop: 'accountid',
-            label: '用户ID',
-            width: '120'
-          },
+          // {
+          //   prop: 'accountid',
+          //   label: '用户ID',
+          //   width: '120'
+          // },
           {
             prop: 'username',
             label: '用户名',
@@ -339,6 +357,33 @@ export default {
         }
         this.getList(obj)
       }
+    },
+    userStatus(item, num) {
+      let text = ''
+      switch(num) {
+        case 0:
+          text= '确定停用' + item.username + '用户？';
+          break;
+        case 1:
+          text= '确定启用' + item.username + '用户？';
+          break;
+      }
+      this.$confirm(text, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.$api.UserMsg.changeStatus(item.id, num, res => {
+          if(res) {
+            this.$message.success('状态修改成功')
+          }
+          else {
+            this.$message.errror('状态修改失败')
+          }
+          this.getList(this.obj)
+        })
+      }).catch(() => {
+        this.$message.info('已取消修改~')
+      })
     }
   },
   created() {

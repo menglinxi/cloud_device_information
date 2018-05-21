@@ -36,5 +36,17 @@ export default {
         http.get('channel/sub', {
             id: id
         }, success)
+    },
+    /**
+     * 修改用户状态
+     * @param {String} id 用户id
+     * @param {Number} status 用户状态
+     * @param {Function} success 成功回调
+     */
+    changeStatus(id, status, success) {
+        http.get('account/reguserstop', {
+            id: id,
+            isstop: status
+        }, success)
     }
 }
