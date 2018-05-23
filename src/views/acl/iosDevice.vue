@@ -121,7 +121,7 @@
       </el-table-column>
     </el-table>
     <div class="page" v-if="this.page.pageSize>=15">
-      <el-pagination background @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="this.page.pageSize">
+      <el-pagination background @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="this.page.pageSize" style='text-align: center; margin-top: 10px;'>
       </el-pagination>
     </div>
   </section>

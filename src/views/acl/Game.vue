@@ -60,7 +60,7 @@
             </el-table-column>
         </el-table>
         <el-pagination
-            style='text-align: center'
+            style='text-align: center; margin-top: 10px;'
             v-if='pager.recordCount > 10' 
             :total="pager.recordCount"
             :page-size="pager.pageSize" 

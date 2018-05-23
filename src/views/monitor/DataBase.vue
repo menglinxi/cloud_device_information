@@ -21,7 +21,7 @@
             <el-tab-pane label="数据源" name="datasource">
                 <el-tabs v-model="activeDataSource" type="card" addable @tab-click="switchDataSource">
                     <el-tab-pane
-                            v-for="(item, index) in datasource"
+                            v-for="item in datasource"
                             :label="item.name"
                             :name="item.id"
                             :key="item.id">

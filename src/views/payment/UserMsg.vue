@@ -92,10 +92,11 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        v-if='pager.pageCount > 10'
+        style='text-align: center; margin-top: 10px;'
+        v-if='pager.recordCount > 10'
         :current-page="pager.pageNumber"
         layout="prev, pager, next"
-        :total="pager.pageCount"
+        :total="pager.recordCount"
         @current-change='handlePage'>
       </el-pagination>
   </div>
@@ -195,7 +196,7 @@ export default {
       this.$api.UserMsg.company(res => {
         this.companyList = res.codes
           const obj = {
-            page: 1,
+            page: this.pager.pageNumber,
             channelid: 0,
             pchannelid: 0,
             companyid: 0,
@@ -296,7 +297,7 @@ export default {
     getSearch() {
       if(this.obj.companyid == '' && this.obj.pchannelid == '' && this.obj.channelid == '' && this.searchId == '' && this.searchKey == '') {
           const objn = {
-              page: 1,
+              page: this.pager.pageNumber,
               companyid: 0,
               pchannelid: 0,
               channelid: 0,
@@ -307,6 +308,7 @@ export default {
           return
       }
       let obj = this.obj
+      this.obj.page = this.pager.pageNumber
       if(this.obj.companyid != '') {
         if(this.obj.pchannelid == '') {
           this.$message.error('请选择父渠道！')

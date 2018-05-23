@@ -83,7 +83,7 @@
           <el-pagination
             style='text-align: center; margin-top: 10px;'
             v-if='pager.recordCount > 15'
-            :current-page="pager.pageCount"
+            :current-page="pager.pageNumber"
             layout="prev, pager, next"
             :total="pager.recordCount"
             @current-change='handlePage'>
@@ -137,13 +137,13 @@ export default {
                     width: ''
                 },
                 {
-                    prop: 'gamecode',
-                    label: '游戏渠道码',
+                    prop: 'app_channel',
+                    label: '游戏渠道',
                     width: ''
                 },
                 {
-                    prop: 'app_channel',
-                    label: '用户渠道码',
+                    prop: 'channelName',
+                    label: '用户渠道',
                     width: ''
                 },
                 {
@@ -173,11 +173,18 @@ export default {
     methods: {
         getList(obj) {
             this.$api.Payment.payList(obj, res => {
-                this.payList = res.account.dataList.map((i) => {
+                let cobj = {}
+                this.channelstree.forEach((e) => {
+                    e.child.forEach((i) => {
+                        cobj[i.id] = i.key
+                    })
+                })
+                this.payList = res.pager.dataList.map((i) => {
                     i.status = i.status == 1 ? true : false
+                    i.channelName = cobj[i.userchannelid]
                     return i
                 })
-                this.pager = res.account.pager
+                this.pager = res.pager.pager
             })
         },
         changeStatus(item) {
