@@ -229,6 +229,7 @@ export default {
                                 }) 
                                 this.pager.pageNumber = 1
                                 this.msgContent.isShowContent = false
+                                this.$store.dispatch('getChannel')
                                 this.getData() 
                             }                    
                         })
@@ -346,7 +347,8 @@ export default {
                             type: 'success'
                         })
                         this.pager.pageNumber = 1
-                    }   
+                    }
+                    this.$store.dispatch('getChannel') 
                     this.isShowContent = false   
                 })
             }else if(this.isAdd=='1'){             
@@ -358,6 +360,7 @@ export default {
                         })
                         this.pager.pageNumber = 1                     
                     }
+                    this.$store.dispatch('getChannel')
                     this.isShowContent = false   
                 })
    

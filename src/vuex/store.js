@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     actions: {
         getChannel({commit, data}) {
-            Vue.prototype.$api.Channel.allList(0, result => {
+            Vue.prototype.$api.Channel.allList(1, result => {
                 if(result.pager) {
                     commit('saveChannelList', result.pager)
                 }
