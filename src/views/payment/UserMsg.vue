@@ -60,6 +60,15 @@
           </el-select>
           <el-button slot="append" icon="el-icon-search" @click='getSearch'></el-button>
         </el-input>
+        <el-date-picker
+          v-model="searchTime"
+          size='small'
+          type="daterange"
+          value-format="yyyy-MM-dd"
+          @change='timeChange'
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
       </div>
       <el-table
         :data='dataList'
@@ -108,6 +117,7 @@ import { mapState } from 'vuex';
 export default {
   data() {
       return{
+        searchTime: [],
         companyList: [],
         pChannelList: [],
         cChannelList: [],
@@ -177,7 +187,9 @@ export default {
           pchannelid: '',
           companyid: '',
           name: '',
-          moblie: ''
+          mobile: '',
+          startTime: '',
+          endTime: ''
         },
         pager: {
           pageCount: 1,
@@ -201,7 +213,7 @@ export default {
             pchannelid: 0,
             companyid: 0,
             name: '',
-            moblie: ''
+            mobile: ''
           }
         this.getList(obj)
       })
@@ -254,71 +266,32 @@ export default {
       }
     },
     getList(obj) {
-      let objn = obj
-      if(obj.companyid == '') {
-        objn = {
-          page: obj.page,
-          companyid: 0,
-          pchannelid: 0,
-          channelid: 0,
-          name: obj.name,
-          moblie: obj.moblie
-        }
-      }
-      else {
-        if(obj.pchannelid == '') {
-          objn = {
-            page: obj.page,
-            companyid: obj.companyid,
-            pchannelid: 0,
-            channelid: 0,
-            name: obj.name,
-            moblie: obj.moblie
-          }
-        }
-        else {
-          if(obj.channelid == '') {
-            objn = {
-              page: obj.page,
-              companyid: obj.companyid,
-              pchannelid: obj.pchannelid,
-              channelid: 0,
-              name: obj.name,
-              moblie: obj.moblie
-            }
-          }
-        }
-      }
-      this.$api.UserMsg.list(objn, res => {
+      this.$api.UserMsg.list(obj, res => {
         this.dataList = res.account.dataList
         this.pager = res.account.pager
       })
     },
-    getSearch() {
-      if(this.obj.companyid == '' && this.obj.pchannelid == '' && this.obj.channelid == '' && this.searchId == '' && this.searchKey == '') {
-          const objn = {
-              page: this.pager.pageNumber,
-              companyid: 0,
-              pchannelid: 0,
-              channelid: 0,
-              name: '',
-              mobile: '' 
-          }
-          this.getList(objn)
-          return
-      }
-      let obj = this.obj
-      this.obj.page = this.pager.pageNumber
+    getSearch(num) {
+      let obj = {
+            page: this.obj.page,
+            companyid: this.obj.companyid,
+            pchannelid: this.obj.pchannelid,
+            channelid: this.obj.channelid,
+            name: this.obj.name,
+            mobile: this.obj.mobile,
+            startTime: this.obj.startTime,
+            endTime: this.obj.endTime
+        }
       if(this.obj.companyid != '') {
         if(this.obj.pchannelid == '') {
           this.$message.error('请选择父渠道！')
           return
         }
       }
-      if(this.obj.companyid == '' && this.searchId == '') {
-          this.$message.error('请选择查询内容')
-          return
-      }
+      // if(this.obj.companyid == '' && this.searchId == '') {
+      //     this.$message.error('请选择查询内容')
+      //     return
+      // }
       if(this.searchId != '') {
           if(this.searchKey == '') {
               this.$message.error('请填写搜索内容~~~')
@@ -328,10 +301,10 @@ export default {
               switch(this.searchId) {
                   case 1:
                       obj.name = this.searchKey;
-                      obj.moblie = '';
+                      obj.mobile = '';
                       break;
                   case 2:
-                      obj.moblie = this.searchKey;
+                      obj.mobile = this.searchKey;
                       obj.name = '';
                       break;
               }
@@ -339,14 +312,18 @@ export default {
       }
       else {
           obj.name = '';
-          obj.moblie = '';
+          obj.mobile = '';
       }
+      obj.companyid = this.obj.companyid == '' ? 0 : this.obj.companyid
+      obj.pchannelid = this.obj.pchannelid == '' ? 0 : this.obj.pchannelid
+      obj.channelid = this.obj.channelid == '' ? 0 : this.obj.channelid
+      obj.page = !num ? 1 : this.pager.pageNumber
       this.getList(obj)
     },
     handlePage(e) {
       this.pager.pageNumber = e
-      if(this.obj.companyid == '' || this.obj.pchannelid == '' || this.obj.searchId == '' || this.obj.searchKey == '') {
-        this.getSearch()
+      if(this.searchTime.length != 0 ||  this.obj.companyid != '' || this.obj.pchannelid != '' || this.obj.searchId != '' || this.obj.searchKey != '') {
+        this.getSearch(1)
       }
       else {
         const obj = {
@@ -355,7 +332,9 @@ export default {
           pchannelid: 0,
           companyid: 0,
           name: '',
-          moblie: ''
+          mobile: '',
+          startTime: '',
+          endTime: ''
         }
         this.getList(obj)
       }
@@ -386,6 +365,15 @@ export default {
       }).catch(() => {
         this.$message.info('已取消修改~')
       })
+    },
+    timeChange(e) {
+      if(e == null) {
+        this.obj.startTime = ''
+        this.obj.endTime = ''
+        return
+      }
+      this.obj.startTime = e[0]
+      this.obj.endTime = e[1]
     }
   },
   created() {
@@ -396,7 +384,9 @@ export default {
         pchannelid: 0,
         companyid: 0,
         name: '',
-        moblie: ''
+        mobile: '',
+        startTime: '',
+        endTime: ''
       }
     this.getList(obj)
   }

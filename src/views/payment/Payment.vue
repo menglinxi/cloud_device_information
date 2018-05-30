@@ -56,6 +56,15 @@
           </el-select>
           <el-button slot="append" icon="el-icon-search" @click='getSearch'></el-button>
         </el-input>
+        <el-date-picker
+            v-model="searchTime"
+            size='small'
+            type="daterange"
+            value-format="yyyy-MM-dd"
+            @change='timeChange'
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+        </el-date-picker>
       </div>
       <div>
           <el-table
@@ -98,6 +107,7 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+            searchTime: [],
             companyList: [],
             pChannelList: [],
             cChannelList: [],
@@ -106,7 +116,10 @@ export default {
                 pChannelId: '',
                 cChannelId: '',
                 gamename: '',
-                orderid: '' 
+                orderid: '',
+                startTime: '',
+                endTime: '',
+                page: 1
             },
             searchId: '',
             payList: [],
@@ -160,8 +173,8 @@ export default {
             select: '1',
             searchKey: '',
             pager: {
+                pageNumber: 1,
                 pageCount: 1,
-                pageNumber:1,
                 pageSize: 15,
                 recordCount: 1
             }
@@ -204,7 +217,9 @@ export default {
                     pChannelId: 0,
                     cChannelId: 0,
                     gamename: '',
-                    orderid: '' 
+                    orderid: '',
+                    startTime: '',
+                    endTime: ''
                 }
                 this.getList(obj)
             })
@@ -243,24 +258,51 @@ export default {
             //   })
             }
         },
-        getSearch() {
-            if(this.obj.companyId == '' && this.obj.pChannelId == '' && this.obj.cChannelId == '' && this.searchId == '' && this.searchKey == '') {
-                const objn = {
-                    page: 1,
-                    companyId: 0,
-                    pChannelId: 0,
-                    cChannelId: 0,
-                    gamename: '',
-                    orderid: '' 
-                }
-                this.getList(objn)
-                return
+        getSearch(num) {
+            // if(this.obj.companyId == '' && this.obj.pChannelId == '' && this.obj.cChannelId == '' && this.searchId == '' && this.searchKey == '') {
+            //     if(this.searchTime.length != 0) {
+            //         const objn = {
+            //             page: !num ? 1 : this.obj.page,
+            //             companyId: 0,
+            //             pChannelId: 0,
+            //             cChannelId: 0,
+            //             gamename: '',
+            //             orderid: '',
+            //             startTime: this.searchTime[0],
+            //             endTime: this.searchTime[1]
+            //         }
+            //         this.getList(objn)
+            //         return
+            //     }
+            //     else {
+            //         const objn = {
+            //             page: 1,
+            //             companyId: 0,
+            //             pChannelId: 0,
+            //             cChannelId: 0,
+            //             gamename: '',
+            //             orderid: '',
+            //             startTime: '',
+            //             endTime: ''
+            //         }
+            //         this.getList(objn)
+            //         return
+            //     }
+            // }
+            let obj = {
+                page: this.obj.page,
+                companyId: this.obj.companyId,
+                pChannelId: this.obj.pChannelId,
+                cChannelId: this.obj.cChannelId,
+                gamename: this.obj.gamename,
+                orderid: this.obj.orderid,
+                startTime: this.obj.startTime,
+                endTime: this.obj.endTime
             }
-            let obj = this.obj
-            if(this.obj.companyId == '' && this.searchId == '') {
-                this.$message.error('请选择查询内容')
-                return
-            }
+            // if(this.obj.companyId == '' && this.searchId == '') {
+            //     this.$message.error('请选择查询内容')
+            //     return
+            // }
             if(this.searchId != '') {
                 if(this.searchKey == '') {
                     this.$message.error('请填写搜索内容~~~')
@@ -283,12 +325,16 @@ export default {
                 obj.orderid = '';
                 obj.gamename = '';
             }
+            obj.companyId = this.obj.companyId == '' ? 0 : this.obj.companyId
+            obj.pChannelId = this.obj.pChannelId == '' ? 0 : this.obj.pChannelId
+            obj.cChannelId = this.obj.cChannelId == '' ? 0 : this.obj.cChannelId
+            obj.page = !num ? 1 : this.pager.pageNumber
             this.getList(obj)
         },
         handlePage(e) {
             this.obj.page = e
-            if(this.obj.companyId != '' || this.obj.pChannelId != '' || this.searchId != '' || this.searchKey != '') {
-                this.getSearch()
+            if(this.obj.companyId != '' || this.obj.pChannelId != '' || this.searchId != '' || this.searchKey != '' || this.searchTime.length != 0) {
+                this.getSearch(1)
             }
             else {
                 const obj = {
@@ -297,21 +343,33 @@ export default {
                     pChannelId: 0,
                     cChannelId: 0,
                     gamename: '',
-                    orderid: '' 
+                    orderid: '',
+                    startTime: '',
+                    endTime: ''
                 }
                 this.getList(obj)
             }
+        },
+        timeChange(e) {
+            if(e == null) {
+                this.obj.startTime = ''
+                this.obj.endTime = ''
+                return
+            }
+            this.obj.startTime = e[0]
+            this.obj.endTime = e[1]
         }
     },
     created() {
-        // this.getData()
         const obj = {
             page: 1,
             companyId: 0,
             pChannelId: 0,
             cChannelId: 0,
             gamename: '',
-            orderid: '' 
+            orderid: '',
+            startTime: '',
+            endTime: ''
         }
         this.getList(obj)
     }

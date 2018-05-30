@@ -8,6 +8,7 @@ import Game from "./acl/game";
 
 import Account from "./biz/account";
 import Channel from "./biz/channel";
+import PerChannel from "./biz/perChannel";
 
 import Payment from './payment/payment';
 import UserMsg from "./payment/userMsg";
@@ -36,6 +37,7 @@ export default {
   Payment: Payment,
   Account: Account,
   Channel: Channel,
+  PerChannel: PerChannel,
   UserMsg: UserMsg,
   CodeBook: CodeBook,
   CodeBookGroup: CodeBookGroup,

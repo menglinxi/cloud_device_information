@@ -12,6 +12,8 @@ import Game from './views/acl/Game.vue'
 
 import Account from './views/account/Account.vue'
 import Channel from './views/account/Channel.vue'
+import PerChannel from './views/account/PerChannel.vue'
+import PerChannelData from './views/account/PerChannelData.vue'
 
 import Payment from './views/payment/Payment.vue'
 import UserMsg from './views/payment/UserMsg.vue'
@@ -156,6 +158,24 @@ let routes = [
         iconCls: 'el-icon-news',
         component: Channel,
         name: '渠道管理',
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/perchannel',
+        iconCls: 'el-icon-news',
+        component: PerChannel,
+        name: '渠道日数据管理',
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/perchanneldata',
+        iconCls: 'el-icon-news',
+        component: PerChannelData,
+        name: '渠道日数据',
         meta: {
           requiresAuth: true
         }

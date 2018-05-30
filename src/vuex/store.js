@@ -46,7 +46,10 @@ export default new Vuex.Store({
         },
         hasPermission: (state, getters) => (permission) => {
             return state.loginUser.permissions.filter(p => p === permission).length > 0;
-        }
+        },
+        channelName: (state, getters) => (id) => {
+            return state.channelList.filter(e => e.id === id);
+        } 
     },
     state: {
         loginUser: {

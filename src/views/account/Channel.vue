@@ -175,8 +175,10 @@ export default {
     methods: {
         saveChannel(sel, item) {
             let cids = []
-            sel.forEach((i) => {
-                cids.push(i.id)
+            sel.forEach((i, index) => {
+                if(index > 0) {
+                    cids.push(i.id)
+                }
             })
             cids = JSON.stringify(cids)
             this.$emit('channelSelect', cids)
@@ -368,7 +370,7 @@ export default {
             
         },
        getAllData(){
-           let type = 0
+           let type = 1
            this.$api.Channel.allList(type,res => {
                 const data = res.pager         
                 if(data){
