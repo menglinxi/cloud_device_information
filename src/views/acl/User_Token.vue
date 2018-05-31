@@ -87,6 +87,11 @@
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
+                  :total="pager.recordCount" :page-size="pager.pageSize"
+                  :current-page.sync="pager.pageNumber" v-show="pager.recordCount > 15"
+                  @current-change="changePage">
+  </el-pagination>
   <el-dialog :title="msgtitle" :visible.sync="dialogFormVisible">
   <el-form :model="form">
     <el-form-item label="token" :label-width="formLabelWidth">
@@ -179,8 +184,11 @@ export default {
         ]
       },
       msgtitle: "",
-      page: {
-        pagenum: 1
+      pager: {
+        pageNumber: 1,
+        pageSize: 10,
+        recordCount: 10,
+        pageCount: 1
       },
       tableData: [],
       dialogFormVisible: false,
@@ -218,6 +226,7 @@ export default {
     searchKeys() {
       this.$api.Token.search(this.searchKey, res => {
         this.tableData = res.pager.dataList;
+        this.pager = res.pager.pager
       });
     },
     saveDate() {
@@ -270,6 +279,7 @@ export default {
       this.$api.Token.list(res => {
         //console.log(res);
         this.tableData = res.pager.dataList;
+        this.pager = res.pager.pager;
       });
     },
     handleEdit(index, row) {
@@ -328,7 +338,8 @@ export default {
             });
           });
       }
-    }
+    },
+    changePage(e) {}
   },
   created() {
     this.getList();

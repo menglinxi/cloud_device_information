@@ -2,12 +2,12 @@
     <section>
         <el-row>
             <el-col :span='6'>
-                <el-button @click='toShowDialog(0)' type='success' size='medium'><i class='el-icon-plus' style='margin-right: 10px'></i>新建账号</el-button>
-                <el-button @click='uploadTxt(1)' type='warning' size='medium' plain><i class='el-icon-tickets' style='margin-right: 10px'></i>导入TXT文件</el-button>
-                <el-button v-if='tableName == "nochannel"' @click='toShowDialog(2)' type='primary' size='medium'><i class='el-icon-more'></i>批量分配渠道</el-button> 
+                <el-button @click='toShowDialog(0)' type='success' size='small'><i class='el-icon-plus' style='margin-right: 10px'></i>新建账号</el-button>
+                <el-button @click='uploadTxt(1)' type='warning' size='small' plain><i class='el-icon-tickets' style='margin-right: 10px'></i>导入TXT文件</el-button>
+                <el-button v-if='tableName == "nochannel"' @click='toShowDialog(2)' type='primary' size='small'><i class='el-icon-more'></i>批量分配渠道</el-button> 
             </el-col>
             <el-col :offset='12' :span='6'>
-                <el-input v-model='searchMsg' placeholder="账号名称搜索" size='medium' clearable @keyup.native.enter='searchAccount'>
+                <el-input v-model='searchMsg' placeholder="账号名称搜索" size='small' clearable @keyup.native.enter='searchAccount'>
                     <el-select class='preIpt' v-model="chosedChannelId" slot="prepend" filterable clearable placeholder="请选择渠道" @change='searchAccount'>
                         <el-option
                         v-for="item in channelList"
@@ -21,7 +21,7 @@
             </el-col>
         </el-row>
         <el-tabs v-model="tableName" @tab-click="changeTable" type="card">
-            <el-tab-pane label="已分配渠道" name="channel"></el-tab-pane>
+            <el-tab-pane label="账户列表" name="channel"></el-tab-pane>
             <el-tab-pane label="未分配渠道" name="nochannel"></el-tab-pane>
         </el-tabs>
         <el-table :data='currentList'
@@ -40,7 +40,7 @@
             prop="name"
             align="center"
             label="账户名"
-            width="180">
+            width="220">
             </el-table-column>
             <el-table-column
             prop="pwd"
@@ -87,7 +87,8 @@
             </el-table-column>
         </el-table>
         <el-pagination
-            v-if='pager.recordCount > 10' 
+            v-if='pager.recordCount > 15 && tableName == "channel"'
+            style='text-align: center; margin-top: 10px;'
             :total="pager.recordCount"
             :page-size="pager.pageSize" 
             :current-page="pager.pageNumber" 
@@ -132,6 +133,7 @@ export default {
     data() {
         return {
             currentList: [],
+            accountList: [],
             hasChannelList: [],
             noChannelList: [],
             tableName: "channel",
@@ -171,8 +173,9 @@ export default {
                 }
             })
         },
-        setAccountList(data) {
-            this.hasChannelList = []
+        setAccountList(data) {  //区别开已分配或未分配渠道
+            // this.hasChannelList = []
+            this.accountList = []
             this.noChannelList = []
             data.forEach((i) => {
                 if(!i.channelcode){
@@ -180,13 +183,16 @@ export default {
                     i.channelid = ''
                     i.channelname = ''
                     this.noChannelList.push(i)
+                    this.accountList.push(i)
                 }
                 else {
-                    this.hasChannelList.push(i)
+                    this.accountList.push(i)
+                    // this.hasChannelList.push(i)
                 }
             });
             if(this.tableName == 'channel') {
-                this.currentList = this.hasChannelList
+                // this.currentList = this.hasChannelList
+                this.currentList = this.accountList
             }
             else {
                 this.currentList = this.noChannelList
@@ -195,10 +201,12 @@ export default {
         changeTable(e) {
             this.tableName = e.name
             if(e.name == 'channel') {
-                this.currentList = this.hasChannelList
+                // this.currentList = this.hasChannelList
+                this.currentList = this.accountList
             }
             else if(e.name == "nochannel") {
                 this.currentList = this.noChannelList
+
             }
         },
         searchAccount() {

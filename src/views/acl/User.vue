@@ -52,15 +52,11 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-row>
-            <el-col :span="6" :offset="18">
-                <el-pagination background small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
-                               :total="pager.pager.recordCount" :page-size="pager.pager.pageSize"
-                               :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.pageCount != 0"
-                               @current-change="changePage">
-                </el-pagination>
-            </el-col>
-        </el-row>
+        <el-pagination small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
+                        :total="pager.pager.recordCount" :page-size="pager.pager.pageSize"
+                        :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.pageCount > 15"
+                        @current-change="changePage">
+        </el-pagination>
         <!-- 弹框区域-->
         <el-dialog :title="user.id == 0 ? '添加用户' : '编辑用户' " :visible.sync="addEditShow" width="30%">
             <el-form :model="user" :rules="$rules" ref="userForm">

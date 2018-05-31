@@ -214,6 +214,7 @@ export default {
       }).then(() => {
           this.$api.User.logout(success => {
             window.location.reload();
+            window.localStorage.clear();
           });
         }).catch(() => {
           this.$message.info('取消退出！')

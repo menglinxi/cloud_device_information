@@ -50,7 +50,7 @@
                 </div>
                 <div class='line'>
                     <div class='name'>渠道名：</div>
-                    <el-select v-model='con.channelid' :disabled="conTitle != '新建数据'" style='width: 220px'>
+                    <el-select v-model='con.channelid' :disabled="conTitle != '新建数据'" filterable style='width: 220px'>
                         <el-option
                             v-for='i in channelList'
                             :key='i.id'
@@ -85,7 +85,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
+import { dateFormat } from '../../assets/js/util';
 
 export default {
     data() {
@@ -104,7 +105,7 @@ export default {
             showCon: false,
             conTitle: '新建数据',
             con: {
-                dates: '',
+                dates: new Date(new Date().getTime() - 3600*1000*24),
                 channelid: '',
                 newusers: 0,
                 money: 0

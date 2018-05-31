@@ -66,8 +66,8 @@
       <el-table-column prop="token" label="Token">
       </el-table-column>
     </el-table>
-    <div class="page" v-if="this.page.pageSize>=15">
-      <el-pagination background @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="this.page.pageSize" style='text-align: center; margin-top: 10px;'>
+    <div class="page" v-if="page.recordCount > 15">
+      <el-pagination @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="page.recordCount" style='text-align: center; margin-top: 10px;'>
       </el-pagination>
     </div>
   </section>
@@ -80,8 +80,8 @@ export default {
       loading: false,
       searchKey: "",
       page: {
-        pagenum: 1,
-        pageSize: 0
+        pageNumber: 1,
+        recordCount: 0
       },
       isSearchList: false,
       tableData: []
@@ -98,7 +98,7 @@ export default {
         this.loading = false;
         this.tableData = res.pager.dataList;
         this.isSearchList = true;
-        this.page.pageSize = res.pager.pager.recordCount;
+        this.page = res.pager.pager
       });
     },
     getList() {
@@ -108,11 +108,11 @@ export default {
         this.loading = false;
         //console.log(res);
         this.tableData = res.pager.dataList;
-        this.page.pageSize = res.pager.pager.recordCount;
+        this.page = res.pager.pager
       });
     },
     changePage(page) {
-      this.page.pagenum = page;
+      this.page.pageNumber = page;
       if (this.isSearchList) {
         this.searchKeys();
       } else {

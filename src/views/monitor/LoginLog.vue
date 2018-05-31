@@ -27,15 +27,11 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-row>
-            <el-col :span="6" :offset="18">
-                <el-pagination background small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
-                               :total="pager.pager.recordCount" :page-size="pager.pager.pageSize"
-                               :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.pageCount != 0"
-                               @current-change="changePage">
-                </el-pagination>
-            </el-col>
-        </el-row>
+        <el-pagination small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
+                        :total="pager.pager.recordCount" :page-size="pager.pager.pageSize"
+                        :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.pageCount > 10"
+                        @current-change="changePage">
+        </el-pagination>
     </section>
 </template>
 <style>

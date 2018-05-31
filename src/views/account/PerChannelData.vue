@@ -53,11 +53,14 @@ export default {
     methods: {
         getList() {
             this.$api.PerChannel.list(this.pager.pageNumber, this.timeRange, res => {
+                console.log(res.pager.dataList)
                 this.dataList = res.pager.dataList.map((e) => {
                     let channel = this.$store.getters.channelName(e.channelid)
+                    console.log(channel)
                     e.channelName = channel[0].name
                     let date = e.dates.split(' ')[0]
                     e.dates = date
+                    console.log(date)
                     return e
                 })
                 this.pager = res.pager.pager

@@ -79,7 +79,8 @@
                             this.saveChannelstree(channelstree);
                             let redirect = this.$route.query.redirect? this.$route.query.redirect : '/'
                             this.$router.push(redirect);
-                            this.$message.success('登录成功~~~')
+                            this.$message.success('登录成功~~~');
+                            this.$store.dispatch('getChannel')
                         }, error => {
                             this.$message.error(error);
                             this.refreshCaptcha();

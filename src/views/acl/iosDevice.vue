@@ -120,8 +120,8 @@
       <el-table-column min-width='150' v-if="show.UniqueChipID" prop="UniqueChipID" label="UniqueChipID">
       </el-table-column>
     </el-table>
-    <div class="page" v-if="this.page.pageSize>=15">
-      <el-pagination background @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="this.page.pageSize" style='text-align: center; margin-top: 10px;'>
+    <div class="page" v-if="page.recordCount > 15">
+      <el-pagination @current-change='changePage' layout="prev, pager, next" :page-size='15' :total="page.recordCount" style='text-align: center; margin-top: 10px;'>
       </el-pagination>
     </div>
   </section>
@@ -135,7 +135,8 @@ export default {
       isSearchList:false,
       searchKey: "",
       page: {
-        pagenum: 1
+        pageNumber: 1,
+        recordCount: 10
       },
       tableData: [],
       show: {
@@ -172,10 +173,6 @@ export default {
     };
   },
   methods: {
-    changePage(page) {
-      this.page.pagenum = page;
-      this.getList();
-    },
     searchKeys() {
       this.loading=true;
       var type = "ios";
@@ -183,7 +180,7 @@ export default {
         this.loading=false;
         this.tableData = res.pager.dataList;
         this.isSearchList = false;
-        this.page.pageSize = res.pager.pager.recordCount;
+        this.page.recordCount = res.pager.pager.recordCount;
       });
     },
     getList() {
@@ -193,11 +190,11 @@ export default {
         //console.log(res);
         this.loading=false;
         this.tableData = res.pager.dataList;
-        this.page.pageSize = res.pager.pager.recordCount;
+        this.page.recordCount = res.pager.pager.recordCount;
       });
     },
     changePage(page) {
-      this.page.pagenum = page;
+      this.page.pageNumber = page;
       if (this.isSearchList) {
         this.searchKeys();
       } else {

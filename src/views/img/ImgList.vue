@@ -9,7 +9,7 @@
                 <img width='100%' height="100%" :src='i.imgurl'/>
             </div>
         </div>
-        <div class='bottom-line'>
+        <div class='bottom-line' v-if='imgList.length > 0'>
             <el-button type='success' size="small" @click='handlePage(0)' :disabled="pageNumber == 1">上一页</el-button>
             <el-button type='success' size="small" @click='handlePage(1)'>下一页</el-button>
         </div>

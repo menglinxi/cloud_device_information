@@ -116,7 +116,7 @@
             </el-table>
             <el-pagination
                 style='margin-top: 10px; text-align: center;'
-                v-if='pager.recordCount > 10'
+                v-if='pager.recordCount > 15'
                 @current-change="handleCurrentChange"
                 :current-page="pager.pageNumber"
                 :page-size="pager.pageSize"
