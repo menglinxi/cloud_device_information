@@ -69,7 +69,8 @@
       <div>
           <el-table
             :data='payList'
-            border>
+            border
+            v-loading='loading'>
               <el-table-column
                 v-for='(item, index) in colList'
                 :key='index'
@@ -94,6 +95,7 @@
             v-if='pager.recordCount > 15'
             :current-page="pager.pageNumber"
             layout="prev, pager, next"
+            :page-size="pager.pageSize"
             :total="pager.recordCount"
             @current-change='handlePage'>
         </el-pagination>
@@ -107,6 +109,7 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+            loading: false,
             searchTime: [],
             companyList: [],
             pChannelList: [],
@@ -181,23 +184,25 @@ export default {
         }
     },
     computed: {
-        ...mapState(['channelstree'])
+        ...mapState(['channelstree', 'channelList'])
     },
     methods: {
         getList(obj) {
+            this.loading = true
             this.$api.Payment.payList(obj, res => {
                 let cobj = {}
-                this.channelstree.forEach((e) => {
-                    e.child.forEach((i) => {
-                        cobj[i.id] = i.key
-                    })
+                this.channelList.forEach((e) => {
+                    cobj[e.id] = e.name
                 })
+                console.log('tee', this.channelList)
+                console.log('obj', cobj)
                 this.payList = res.pager.dataList.map((i) => {
                     i.status = i.status == 1 ? true : false
                     i.channelName = cobj[i.userchannelid]
                     return i
                 })
                 this.pager = res.pager.pager
+                this.loading = false
             })
         },
         changeStatus(item) {

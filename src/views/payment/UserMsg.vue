@@ -72,7 +72,8 @@
       </div>
       <el-table
         :data='dataList'
-        border>
+        border
+        v-loading='loading'>
         <el-table-column
           v-for='(item, index) in colList'
           :key='index'
@@ -105,6 +106,7 @@
         v-if='pager.recordCount > 10'
         :current-page="pager.pageNumber"
         layout="prev, pager, next"
+        :page-size="pager.pageSize"
         :total="pager.recordCount"
         @current-change='handlePage'>
       </el-pagination>
@@ -117,6 +119,7 @@ import { mapState } from 'vuex';
 export default {
   data() {
       return{
+        loading: false,
         searchTime: [],
         companyList: [],
         pChannelList: [],
@@ -266,9 +269,11 @@ export default {
       }
     },
     getList(obj) {
+      this.loading = true
       this.$api.UserMsg.list(obj, res => {
         this.dataList = res.account.dataList
         this.pager = res.account.pager
+        this.loading = false
       })
     },
     getSearch(num) {
