@@ -125,5 +125,15 @@ export default {
         http.get('user/getchannels', {
             uid: id
         }, success)
+    },
+    /**
+     * 获取用户管理渠道
+     * @param {string} uid 用户id
+     * @param {Function} success 成功回调
+     */
+    getUserChannel(uid, success) {
+        http.get('user/getchannelsbyuser', {
+            uid: uid
+        }, success)
     }
 }

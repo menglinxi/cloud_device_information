@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
     data() {
         return{
@@ -46,9 +44,6 @@ export default {
                 recordCount: 10
             }
         }
-    },
-    computed: {
-        ...mapState(['channelList'])
     },
     methods: {
         getList() {

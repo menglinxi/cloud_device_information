@@ -85,7 +85,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import { dateFormat } from '../../assets/js/util';
 
 export default {
@@ -105,15 +104,14 @@ export default {
             showCon: false,
             conTitle: '新建数据',
             con: {
-                dates: new Date(new Date().getTime() - 3600*1000*24),
+                dates: '',
                 channelid: '',
                 newusers: 0,
                 money: 0
-            }
+            },
+            userId: JSON.parse(window.localStorage.vuex).loginUser.id,
+            channelList: []
         }
-    },
-    computed: {
-        ...mapState(['channelList'])
     },
     methods: {
         getList() {
@@ -129,11 +127,20 @@ export default {
                 this.pager = res.pager.pager
             })
         },
+        getChannels() {
+            let list = []
+            this.$api.Channel.getUserChannel(this.userId, res => {
+                res.channelids.forEach((e) => {
+                    let obj = this.$store.getters.channelName(e)[0]
+                    this.channelList.push(obj)
+                })
+            })
+        },
         addData() {
             this.conTitle = '新建数据'
             this.showCon = true
             this.con = {
-                dates: '',
+                dates: dateFormat(new Date().getTime() - 3600*1000*24),
                 channelid: '',
                 newusers: 0,
                 money: 0
@@ -208,6 +215,7 @@ export default {
         }
     },
     created() {
+        this.getChannels()
         this.getList()
     }
 }
