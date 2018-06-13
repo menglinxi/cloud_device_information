@@ -14,8 +14,7 @@
             ref="channelList"
             tooltip-effect="dark"
             style="width: 100%"
-            @select="saveChannel"
-            @select-all="saveChannel"
+            @selection-change="saveChannel"
             v-loading='loading'>
             <el-table-column
             type="selection"
@@ -175,8 +174,9 @@ export default {
     methods: {
         saveChannel(sel, item) {
             let cids = []
+            console.log(sel, 'sel')
             sel.forEach((i, index) => {
-                if(index > 0) {
+                if(i != undefined) {
                     cids.push(i.id)
                 }
             })

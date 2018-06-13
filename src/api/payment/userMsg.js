@@ -48,5 +48,15 @@ export default {
             id: id,
             isstop: status
         }, success)
+    },
+    /**
+     * 获取用户详细信息
+     * @param {*} uid 用户ID
+     * @param {*} success 成功回调
+     */
+    userInfo(uid, success) {
+        http.get('/account/getuinfo', {
+            uid: uid
+        }, success)
     }
 }

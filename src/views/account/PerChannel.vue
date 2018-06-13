@@ -130,7 +130,10 @@ export default {
         getChannels() {
             let list = []
             this.$api.Channel.getUserChannel(this.userId, res => {
-                this.channelList = res.channelids
+                this.channelList = res.channelids.map((i) => {
+                    let obj = this.$store.getters.channelName(i)[0]
+                    return obj
+                })
             })
         },
         addData() {

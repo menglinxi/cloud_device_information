@@ -75,6 +75,38 @@
         border
         v-loading='loading'>
         <el-table-column
+          prop='id'
+          label='ID'
+          align='center'
+          width='80'>
+          <template slot-scope="scope">
+            <div>
+              {{scope.row.id}}
+              <el-popover
+                placement="bottom"
+                width="400"
+                trigger="click">
+                <el-table
+                  border
+                  v-loading='infoLoading'
+                  :data='infoList'
+                  :show-header=false>
+                  <el-table-column
+                    prop='name'
+                    width="120"
+                    align='center'
+                    ></el-table-column>
+                  <el-table-column
+                    prop='key'
+                    align='center'
+                    ></el-table-column>
+                </el-table>
+                <i class='el-icon-info' style='color:#87CEFA; cursor: pointer;' slot="reference" @click='getUserMsg(scope.row.id)'></i>
+              </el-popover>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           v-for='(item, index) in colList'
           :key='index'
           :prop='item.prop'
@@ -138,11 +170,11 @@ export default {
         searchKey: '',
         dataList: [],
         colList: [
-          {
-            prop: 'id',
-            label: 'ID',
-            width: '60'
-          },
+          // {
+          //   prop: 'id',
+          //   label: 'ID',
+          //   width: '60'
+          // },
           // {
           //   prop: 'accountid',
           //   label: '用户ID',
@@ -153,11 +185,11 @@ export default {
             label: '用户名',
             width: ''
           },
-          {
-            prop: 'pwd',
-            label: '密码',
-            width: '160'
-          },
+          // {
+          //   prop: 'pwd',
+          //   label: '密码',
+          //   width: '160'
+          // },
           {
             prop: 'qq',
             label: 'QQ号码',
@@ -199,7 +231,9 @@ export default {
           pageNumber: 1,
           pageSize: 15,
           recordCount: 3
-        }
+        },
+        infoLoading: true,
+        infoList: []
       }
   },
   computed: {
@@ -379,6 +413,21 @@ export default {
       }
       this.obj.startTime = e[0]
       this.obj.endTime = e[1]
+    },
+    getUserMsg(id) {
+      this.infoLoading = true
+      this.$api.UserMsg.userInfo(id, res => {
+        this.infoList = []
+        let resList = res.userinfo
+        let nameList = Object.keys(resList)
+        nameList.forEach((i) => {
+          let obj ={}
+          obj.name = i
+          obj.key = resList[i]
+          this.infoList.push(obj)
+        })
+        this.infoLoading = false
+      })
     }
   },
   created() {

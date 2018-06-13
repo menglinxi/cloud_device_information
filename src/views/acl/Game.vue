@@ -196,20 +196,21 @@ export default {
             })            
         },
         searchGame() {
-            if(!this.chosedChannelId && this.searchMsg) {
-                this.searchMsg = ''
-                this.getData()
-                return
-            }
-            else if(!this.searchMsg && !this.chosedChannelId) {
+            if(!this.chosedChannelId && !this.searchMsg) {
                 this.pager.pageNumber = 1
                 this.getData()
                 return
             }
+            // else if(!this.searchMsg && !this.chosedChannelId) {
+                
+            //     this.getData()
+            //     return
+            // }
             else if(this.searchMsg && !this.chosedChannelId) {
+                this.searchMsg = ''
                 this.$message({
                     message: '请选择搜索渠道！',
-                    type: 'errror'
+                    type: 'error'
                 })
                 return
             }
@@ -310,7 +311,12 @@ export default {
         },
         handlePage(e) {
             this.pager.pageNumber = e
-            this.getData()
+            if(this.chosedChannelId || this.searchMsg) {
+                this.searchGame()
+            }
+            else {
+                this.getData()
+            }
         },
         overLimit(files, fileList) {
             this.$message({

@@ -72,6 +72,38 @@
             border
             v-loading='loading'>
               <el-table-column
+                prop='id'
+                label='ID'
+                align='center'
+                width='80'>
+                <template slot-scope="scope">
+                  <div>
+                  {{scope.row.id}}
+                  <el-popover
+                      placement="bottom"
+                      width="400"
+                      trigger="click">
+                      <el-table
+                      border
+                      v-loading='infoLoading'
+                      :data='infoList'
+                      :show-header=false>
+                      <el-table-column
+                          prop='name'
+                          width="120"
+                          align='center'
+                          ></el-table-column>
+                      <el-table-column
+                          prop='key'
+                          align='center'
+                          ></el-table-column>
+                      </el-table>
+                      <i class='el-icon-info' style='color:#87CEFA; cursor: pointer;' slot="reference" @click='getUserMsg(scope.row.id)'></i>
+                  </el-popover>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column
                 v-for='(item, index) in colList'
                 :key='index'
                 :width='item.width'
@@ -127,11 +159,11 @@ export default {
             searchId: '',
             payList: [],
             colList: [
-                {
-                    prop: 'userid',
-                    label: '用户id',
-                    width: '70'
-                },
+                // {
+                //     prop: 'userid',
+                //     label: '用户id',
+                //     width: '70'
+                // },
                 {
                     prop: 'orderid',
                     label: '订单号',
@@ -180,190 +212,207 @@ export default {
                 pageCount: 1,
                 pageSize: 15,
                 recordCount: 1
-            }
+            },
+            infoList: [],
+            infoLoading: true
         }
     },
     computed: {
         ...mapState(['channelstree', 'channelList'])
     },
     methods: {
-        getList(obj) {
-            this.loading = true
-            this.$api.Payment.payList(obj, res => {
-                let cobj = {}
-                this.channelList.forEach((e) => {
-                    cobj[e.id] = e.name
-                })
-                console.log('tee', this.channelList)
-                console.log('obj', cobj)
-                this.payList = res.pager.dataList.map((i) => {
-                    i.status = i.status == 1 ? true : false
-                    i.channelName = cobj[i.userchannelid]
-                    return i
-                })
-                this.pager = res.pager.pager
-                this.loading = false
-            })
-        },
-        changeStatus(item) {
-            const id = item.orderid
-            const status = item.status
-            this.$api.Payment.payStatus(id, status, res => {
-                this.$message.success('支付状态修改成功！')
-            })
-        },
-        getData() {
-            // 后端获取公司名称列表
-            this.$api.UserMsg.company(res => {
-                this.companyList = res.codes
-                const obj = {
-                    page: 1,
-                    companyId: 0,
-                    pChannelId: 0,
-                    cChannelId: 0,
-                    gamename: '',
-                    orderid: '',
-                    startTime: '',
-                    endTime: ''
-                }
-                this.getList(obj)
-            })
-        },
-        getChannels(name) {
-            // 后端获取渠道信息
-            if(name == 'parent') {
-              if(this.obj.companyId == '') {
-                this.obj.pChannelId = ''
-                this.obj.cChannelId = ''
-                return
+      getList(obj) {
+          this.loading = true
+          this.$api.Payment.payList(obj, res => {
+              let cobj = {}
+              this.channelList.forEach((e) => {
+                  cobj[e.id] = e.name
+              })
+              console.log('tee', this.channelList)
+              console.log('obj', cobj)
+              this.payList = res.pager.dataList.map((i) => {
+                  i.status = i.status == 1 ? true : false
+                  i.channelName = cobj[i.userchannelid]
+                  return i
+              })
+              this.pager = res.pager.pager
+              this.loading = false
+          })
+      },
+      changeStatus(item) {
+          const id = item.orderid
+          const status = item.status
+          this.$api.Payment.payStatus(id, status, res => {
+              this.$message.success('支付状态修改成功！')
+          })
+      },
+      getData() {
+          // 后端获取公司名称列表
+          this.$api.UserMsg.company(res => {
+              this.companyList = res.codes
+              const obj = {
+                  page: 1,
+                  companyId: 0,
+                  pChannelId: 0,
+                  cChannelId: 0,
+                  gamename: '',
+                  orderid: '',
+                  startTime: '',
+                  endTime: ''
               }
-              this.channelstree.forEach((i) => {
-                    if(i.id == this.obj.companyId) {
-                        this.pChannelList = i.child
-                    }
-                })
-            //   let id = this.obj.companyId
-            //   this.$api.UserMsg.channelOfCompany(id, res => {
-            //     this.pChannelList = res.pager
-            //   })
+              this.getList(obj)
+          })
+      },
+      getChannels(name) {
+          // 后端获取渠道信息
+          if(name == 'parent') {
+            if(this.obj.companyId == '') {
+              this.obj.pChannelId = ''
+              this.obj.cChannelId = ''
+              return
             }
-            else if(name == 'child') {
-              if(this.obj.pChannelId == '') {
-                this.obj.cChannelId = ''
-                return
+            this.channelstree.forEach((i) => {
+                  if(i.id == this.obj.companyId) {
+                      this.pChannelList = i.child
+                  }
+              })
+          //   let id = this.obj.companyId
+          //   this.$api.UserMsg.channelOfCompany(id, res => {
+          //     this.pChannelList = res.pager
+          //   })
+          }
+          else if(name == 'child') {
+            if(this.obj.pChannelId == '') {
+              this.obj.cChannelId = ''
+              return
+            }
+            this.pChannelList.forEach((i) => {
+                  if(i.id == this.obj.pChannelId) {
+                      this.cChannelList = i.child
+                  }
+              })
+          //   let type = this.obj.pChannelId
+          //   this.$api.UserMsg.subOfChannel(type, res => {
+          //     this.cChannelList = res.pager
+          //   })
+          }
+      },
+      getSearch(num) {
+          // if(this.obj.companyId == '' && this.obj.pChannelId == '' && this.obj.cChannelId == '' && this.searchId == '' && this.searchKey == '') {
+          //     if(this.searchTime.length != 0) {
+          //         const objn = {
+          //             page: !num ? 1 : this.obj.page,
+          //             companyId: 0,
+          //             pChannelId: 0,
+          //             cChannelId: 0,
+          //             gamename: '',
+          //             orderid: '',
+          //             startTime: this.searchTime[0],
+          //             endTime: this.searchTime[1]
+          //         }
+          //         this.getList(objn)
+          //         return
+          //     }
+          //     else {
+          //         const objn = {
+          //             page: 1,
+          //             companyId: 0,
+          //             pChannelId: 0,
+          //             cChannelId: 0,
+          //             gamename: '',
+          //             orderid: '',
+          //             startTime: '',
+          //             endTime: ''
+          //         }
+          //         this.getList(objn)
+          //         return
+          //     }
+          // }
+          let obj = {
+              page: this.obj.page,
+              companyId: this.obj.companyId,
+              pChannelId: this.obj.pChannelId,
+              cChannelId: this.obj.cChannelId,
+              gamename: this.obj.gamename,
+              orderid: this.obj.orderid,
+              startTime: this.obj.startTime,
+              endTime: this.obj.endTime
+          }
+          // if(this.obj.companyId == '' && this.searchId == '') {
+          //     this.$message.error('请选择查询内容')
+          //     return
+          // }
+          if(this.searchId != '') {
+              if(this.searchKey == '') {
+                  this.$message.error('请填写搜索内容~~~')
+                  return
               }
-              this.pChannelList.forEach((i) => {
-                    if(i.id == this.obj.pChannelId) {
-                        this.cChannelList = i.child
-                    }
-                })
-            //   let type = this.obj.pChannelId
-            //   this.$api.UserMsg.subOfChannel(type, res => {
-            //     this.cChannelList = res.pager
-            //   })
-            }
-        },
-        getSearch(num) {
-            // if(this.obj.companyId == '' && this.obj.pChannelId == '' && this.obj.cChannelId == '' && this.searchId == '' && this.searchKey == '') {
-            //     if(this.searchTime.length != 0) {
-            //         const objn = {
-            //             page: !num ? 1 : this.obj.page,
-            //             companyId: 0,
-            //             pChannelId: 0,
-            //             cChannelId: 0,
-            //             gamename: '',
-            //             orderid: '',
-            //             startTime: this.searchTime[0],
-            //             endTime: this.searchTime[1]
-            //         }
-            //         this.getList(objn)
-            //         return
-            //     }
-            //     else {
-            //         const objn = {
-            //             page: 1,
-            //             companyId: 0,
-            //             pChannelId: 0,
-            //             cChannelId: 0,
-            //             gamename: '',
-            //             orderid: '',
-            //             startTime: '',
-            //             endTime: ''
-            //         }
-            //         this.getList(objn)
-            //         return
-            //     }
-            // }
-            let obj = {
-                page: this.obj.page,
-                companyId: this.obj.companyId,
-                pChannelId: this.obj.pChannelId,
-                cChannelId: this.obj.cChannelId,
-                gamename: this.obj.gamename,
-                orderid: this.obj.orderid,
-                startTime: this.obj.startTime,
-                endTime: this.obj.endTime
-            }
-            // if(this.obj.companyId == '' && this.searchId == '') {
-            //     this.$message.error('请选择查询内容')
-            //     return
-            // }
-            if(this.searchId != '') {
-                if(this.searchKey == '') {
-                    this.$message.error('请填写搜索内容~~~')
-                    return
-                }
-                else {
-                    switch(this.searchId) {
-                        case '1':
-                            obj.orderid = this.searchKey;
-                            obj.gamename = '';
-                            break;
-                        case '2':
-                            obj.gamename = this.searchKey;
-                            obj.orderid = '';
-                            break;
-                    }
-                }
-            }
-            else {
-                obj.orderid = '';
-                obj.gamename = '';
-            }
-            obj.companyId = this.obj.companyId == '' ? 0 : this.obj.companyId
-            obj.pChannelId = this.obj.pChannelId == '' ? 0 : this.obj.pChannelId
-            obj.cChannelId = this.obj.cChannelId == '' ? 0 : this.obj.cChannelId
-            obj.page = !num ? 1 : this.pager.pageNumber
-            this.getList(obj)
-        },
-        handlePage(e) {
-            this.obj.page = e
-            if(this.obj.companyId != '' || this.obj.pChannelId != '' || this.searchId != '' || this.searchKey != '' || this.searchTime.length != 0) {
-                this.getSearch(1)
-            }
-            else {
-                const obj = {
-                    page: e,
-                    companyId: 0,
-                    pChannelId: 0,
-                    cChannelId: 0,
-                    gamename: '',
-                    orderid: '',
-                    startTime: '',
-                    endTime: ''
-                }
-                this.getList(obj)
-            }
-        },
-        timeChange(e) {
-            if(e == null) {
-                this.obj.startTime = ''
-                this.obj.endTime = ''
-                return
-            }
-            this.obj.startTime = e[0]
-            this.obj.endTime = e[1]
-        }
+              else {
+                  switch(this.searchId) {
+                      case '1':
+                          obj.orderid = this.searchKey;
+                          obj.gamename = '';
+                          break;
+                      case '2':
+                          obj.gamename = this.searchKey;
+                          obj.orderid = '';
+                          break;
+                  }
+              }
+          }
+          else {
+              obj.orderid = '';
+              obj.gamename = '';
+          }
+          obj.companyId = this.obj.companyId == '' ? 0 : this.obj.companyId
+          obj.pChannelId = this.obj.pChannelId == '' ? 0 : this.obj.pChannelId
+          obj.cChannelId = this.obj.cChannelId == '' ? 0 : this.obj.cChannelId
+          obj.page = !num ? 1 : this.pager.pageNumber
+          this.getList(obj)
+      },
+      handlePage(e) {
+          this.obj.page = e
+          if(this.obj.companyId != '' || this.obj.pChannelId != '' || this.searchId != '' || this.searchKey != '' || this.searchTime.length != 0) {
+              this.getSearch(1)
+          }
+          else {
+              const obj = {
+                  page: e,
+                  companyId: 0,
+                  pChannelId: 0,
+                  cChannelId: 0,
+                  gamename: '',
+                  orderid: '',
+                  startTime: '',
+                  endTime: ''
+              }
+              this.getList(obj)
+          }
+      },
+      timeChange(e) {
+          if(e == null) {
+              this.obj.startTime = ''
+              this.obj.endTime = ''
+              return
+          }
+          this.obj.startTime = e[0]
+          this.obj.endTime = e[1]
+      },
+      getUserMsg(id) {
+        this.infoLoading = true
+        this.$api.UserMsg.userInfo(id, res => {
+          this.infoList = []
+          let resList = res.userinfo
+          let nameList = Object.keys(resList)
+          nameList.forEach((i) => {
+            let obj ={}
+            obj.name = i
+            obj.key = resList[i]
+            this.infoList.push(obj)
+          })
+          this.infoLoading = false
+        })
+      }
     },
     created() {
         const obj = {
