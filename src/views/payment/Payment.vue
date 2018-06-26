@@ -72,33 +72,65 @@
             border
             v-loading='loading'>
               <el-table-column
-                prop='id'
-                label='ID'
+                prop='userid'
+                label='用户ID'
                 align='center'
                 width='80'>
                 <template slot-scope="scope">
                   <div>
-                  {{scope.row.id}}
+                  {{scope.row.userid}}
                   <el-popover
-                      placement="bottom"
-                      width="400"
+                      placement="right"
+                      :width="popWid"
                       trigger="click">
-                      <el-table
-                      border
-                      v-loading='infoLoading'
-                      :data='infoList'
-                      :show-header=false>
-                      <el-table-column
-                          prop='name'
-                          width="120"
-                          align='center'
-                          ></el-table-column>
-                      <el-table-column
-                          prop='key'
-                          align='center'
-                          ></el-table-column>
-                      </el-table>
-                      <i class='el-icon-info' style='color:#87CEFA; cursor: pointer;' slot="reference" @click='getUserMsg(scope.row.id)'></i>
+                      <div>
+                        <div style='text-align:center' v-if='!msgObj.username && !msgObj.email && !msgObj.virtualdevice && !msgObj.truedevice'>
+                          暂无信息
+                        </div>
+                        <div v-if='msgObj.username || msgObj.email'>
+                            <p class='title-bg'>基本信息</p>
+                            <div class='line' v-for='(val, key, index) in msgObj' :key='index'>
+                            <div class='line-name' v-if='key == "username" || key == "email"'>
+                                {{key}}
+                            </div>
+                            <div class='line-val' v-if='key == "username" || key == "email"'>
+                                {{val}}
+                            </div>
+                            </div>
+                        </div>
+                        <div v-if='msgObj.virtualdevice || msgObj.truedevice'>
+                            <p class='title-bg'>设备信息</p>
+                            <div class='main-msg'>
+                            <div class='con' :class='[propNum == 2 ? "half-width" : "full-width"]' v-if='msgObj.virtualdevice'>
+                                <p>虚拟设备信息</p>
+                                <div class='line-con'>
+                                <div class='line' v-for='(val, key, index) in msgObj.virtualdevice' :key='index'>
+                                    <div class='line-name'>
+                                    {{key}}
+                                    </div>
+                                    <div class='line-val'>
+                                    {{val}}
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class='con' :class='[propNum == 2 ? "half-width" : "full-width"]' v-if='msgObj.truedevice'>
+                                <p>真实设备信息</p>
+                                <div>
+                                <div class='line' v-for='(val, key, index) in msgObj.truedevice' :key='index'>
+                                    <div class='line-name'>
+                                    {{key}}
+                                    </div>
+                                    <div class='line-val'>
+                                    {{val}}
+                                    </div>
+                                </div>
+                                </div>
+                            </div>                   
+                            </div>
+                        </div>
+                      </div>
+                      <i class='el-icon-info' style='color:#87CEFA; cursor: pointer;' slot="reference" @click='getUserMsg(scope.row.userid)'></i>
                   </el-popover>
                   </div>
                 </template>
@@ -213,12 +245,28 @@ export default {
                 pageSize: 15,
                 recordCount: 1
             },
-            infoList: [],
+            msgObj: {
+              name: 'aaa',
+              game: '2222',
+              bbb: '4444'
+            },
+            propNum: 0,
+            popWid: 400,
             infoLoading: true
         }
     },
     computed: {
         ...mapState(['channelstree', 'channelList'])
+    },
+    watch: {
+      propNum(val) {
+        if(val == 2) {
+          this.popWid = 800
+        }
+        else {
+          this.popWid = 400
+        }
+      }
     },
     methods: {
       getList(obj) {
@@ -401,15 +449,14 @@ export default {
       getUserMsg(id) {
         this.infoLoading = true
         this.$api.UserMsg.userInfo(id, res => {
-          this.infoList = []
-          let resList = res.userinfo
-          let nameList = Object.keys(resList)
-          nameList.forEach((i) => {
-            let obj ={}
-            obj.name = i
-            obj.key = resList[i]
-            this.infoList.push(obj)
-          })
+          this.msgObj = res.userinfo
+          this.propNum = 0
+          if(res.userinfo.hasOwnProperty('virtualdevice')) {
+            this.propNum ++
+          }
+          if(res.userinfo.hasOwnProperty('truedevice')) {
+            this.propNum ++
+          }
           this.infoLoading = false
         })
       }
@@ -435,5 +482,44 @@ export default {
     display: flex;
     flex-direction: row-reverse;
     margin-bottom: 20px;
+}
+.title-bg{
+  background-color: #eee;
+  text-align: center;
+  margin: 5px 0;
+}
+.line{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  word-wrap:break-word;
+  .line-name{
+    text-align: left;
+    width: 30%;
+  }
+  .line-val{
+      text-align: right;
+      width: 65%;
+  }
+}
+.main-msg{
+  display: flex;
+  justify-content: center;
+  .con{
+    padding: 0 10px;
+    border-left: 1px solid rgb(228, 228, 228);
+    border-right: 1px solid rgb(228, 228, 228); 
+    p{
+      margin: 0;
+      text-align: center;
+      border-bottom: 1px rgb(228, 228, 228) solid;
+    }
+  }
+}
+.full-width{
+  width: 100%;
+}
+.half-width{
+  width: 50%;
 }
 </style>

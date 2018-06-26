@@ -168,24 +168,20 @@ export default {
             },
             isAdd: '0',
             pnameList: {},
-            selectedChannels: []
+            selectedChannels: [],
+            chosedIds: {}
         }
     },
     methods: {
         saveChannel(sel, item) {
             let cids = []
-            console.log(sel, 'sel')
             sel.forEach((i, index) => {
                 if(i != undefined) {
                     cids.push(i.id)
                 }
             })
-            cids = JSON.stringify(cids)
-            this.$emit('channelSelect', cids)
-        },
-        selectStatus(row, index) {
-            console.log(row, index, 'sellll')
-            return true
+            this.chosedIds[this.pager.pageNumber] = cids
+            this.$emit('channelSelect', this.chosedIds)
         },
         handleNodeClick(data) {
         },
@@ -276,8 +272,11 @@ export default {
                         else {
                             i.companyname = ' '
                         }
-                        if(this.selectedChannels.indexOf(i.id) >= 0) {
+                        if(this.chosedIds.hasOwnProperty(this.pager.pageNumber.toString()) && this.chosedIds[this.pager.pageNumber].indexOf(i.id) >= 0) {
                             chosedChannel.push(i)
+                        }
+                        else if(this.selectedChannels.indexOf(i.id) >= 0) {
+                            chosedChannel.push(i) 
                         }
                         return i
                     })
@@ -369,7 +368,7 @@ export default {
             }
             
         },
-       getAllData(){
+        getAllData(){
            let type = 1
            this.$api.Channel.allList(type,res => {
                 const data = res.pager         
@@ -383,34 +382,34 @@ export default {
                 }
             })
             this.getcompanylist()
-       },
-       getcompanylist(){
-           this.$api.Channel.companylist(res => {
-                const data = res.codes         
-                if(data){
-                    this.datalist=data                 
-                    data.forEach((i) => {
-                        this.companyList[i.id] = i.value           
-                    })
-                    
-                }
-                console.log(this.$route.path != '/channel')
-                if(this.$route.path != '/channel') {
-                    this.$api.Channel.getChannelPermission(this.cid, res =>{
-                        this.selectedChannels = []
-                        if(res.channels.length > 0) {
-                            res.channels.forEach((i) => {
-                                this.selectedChannels.push(i.channelid)
-                            })
-                        }
-                        this.getData()
-                    })
-                    return
-                }
-                this.getData()
-            })
-          
-       },
+        },
+        getcompanylist(){
+            this.$api.Channel.companylist(res => {
+                    const data = res.codes         
+                    if(data){
+                        this.datalist=data                 
+                        data.forEach((i) => {
+                            this.companyList[i.id] = i.value           
+                        })
+                        
+                    }
+                    console.log(this.$route.path != '/channel')
+                    if(this.$route.path != '/channel') {
+                        this.$api.Channel.getChannelPermission(this.cid, res =>{
+                            this.selectedChannels = []
+                            if(res.channels.length > 0) {
+                                res.channels.forEach((i) => {
+                                    this.selectedChannels.push(i.channelid)
+                                })
+                            }
+                            this.getData()
+                        })
+                        return
+                    }
+                    this.getData()
+                })
+            
+        },
         handlePage(e) {
             this.pager.pageNumber = e
             this.getData()

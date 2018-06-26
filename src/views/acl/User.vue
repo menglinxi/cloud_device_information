@@ -164,7 +164,8 @@
                 userId: 0,
                 formLabelWidth: "100px",
                 channelShow: false,
-                selectedChannel: ''
+                chosedIds: {},
+                selectedChannel: {}
             };
         },
         components: {
@@ -232,12 +233,16 @@
                 this.channelShow = true
             },
             saveChannel(ids) {
-                console.log('ids', ids)
+                // console.log('ids', ids)
                 this.selectedChannel = ids
             },
             updateChannel() {
-                console.log('selc', this.selectedChannel)
-                this.$api.Channel.channelOfAccount(this.userId, this.selectedChannel, res => {
+                let ids = []
+                for(let i in this.selectedChannel) {
+                    ids = this.selectedChannel[i].concat(ids)
+                }
+                ids = JSON.stringify(ids)
+                this.$api.Channel.channelOfAccount(this.userId, ids, res => {
                     if(res) {
                         this.$message.success('渠道授权成功~~~')
                     }

@@ -426,7 +426,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .search-content{
     margin: 10px;
     text-align: right;
