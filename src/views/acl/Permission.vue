@@ -1,19 +1,14 @@
 <template>
     <section>
-        <el-row>
-            <el-col :span="6">
-                <el-input placeholder="请输入内容" v-model="searchKey" prefix-icon="el-icon-fa-search">
-                    <div slot="append">
-                        <el-button type="primary" icon="el-icon-fa-search"
-                                   @click=" pager.pager.pageNumber = 1 ;doSearch()"></el-button>
-                    </div>
-                </el-input>
-            </el-col>
-            <el-col :span="6" :offset="12">
-                <el-button type="primary" icon="el-icon-fa-plus" @click="addPermission" size="small">添加权限</el-button>
-            </el-col>
-        </el-row>
-
+        <div class='top-bar'>
+            <el-button type="success" plain icon="el-icon-fa-plus" @click="addPermission" size="small">添加权限</el-button>
+            <el-input placeholder="请输入内容" v-model="searchKey" prefix-icon="el-icon-fa-search" style='width: 300px;' size='small'>
+                <div slot="append">
+                    <el-button type="primary" icon="el-icon-fa-search"
+                                @click=" pager.pager.pageNumber = 1 ;doSearch()"></el-button>
+                </div>
+            </el-input>
+        </div>
         <el-table :data="pager.dataList" border stripe style="width: 100%">
             <el-table-column prop="id" label="ID" header-align="center" align="center" width="55">
             </el-table-column>
@@ -65,9 +60,7 @@
         </el-dialog>
     </section>
 </template>
-<style>
-
-</style>
+ 
 <script>
     export default {
         data() {
@@ -161,3 +154,10 @@
         }
     };
 </script>
+<style scoped>
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+</style>

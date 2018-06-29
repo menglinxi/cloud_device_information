@@ -2,7 +2,7 @@
     <section>
         <el-row>
             <el-col :span='6'>
-                <el-button @click='toShowDialog(0)' type='success' size='small'><i class='el-icon-plus' style='margin-right: 10px'></i>新建账号</el-button>
+                <el-button @click='toShowDialog(0)' type='success' size='small' plain><i class='el-icon-plus' style='margin-right: 10px'></i>新建账号</el-button>
                 <el-button @click='uploadTxt(1)' type='warning' size='small' plain><i class='el-icon-tickets' style='margin-right: 10px'></i>导入TXT文件</el-button>
                 <el-button v-if='tableName == "nochannel"' @click='toShowDialog(2)' type='primary' size='small'><i class='el-icon-more'></i>批量分配渠道</el-button> 
             </el-col>

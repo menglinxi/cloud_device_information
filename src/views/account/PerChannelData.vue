@@ -7,10 +7,12 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd"
-                @change='handleDate'>
+                @change='handleDate'
+                size="small">
             </el-date-picker>
         </div>
         <el-table
+            border
             :data='dataList'
             width='100%'>
             <el-table-column prop='dates' label='日期' align='center'></el-table-column>

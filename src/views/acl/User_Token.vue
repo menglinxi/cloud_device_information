@@ -1,15 +1,10 @@
 <template>
 <section>
-    <div class="head">
-      <div class="search">
-      <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select">
+    <div class='top-bar'>
+      <el-button type="success" @click="addItem" icon="el-icon-fa-plus" plain size='small'>添加</el-button>
+      <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select" style='width: 300px;' size='small'>
         <el-button slot="append" @click="searchKeys" icon="el-icon-search"></el-button>
       </el-input>
-      </div>
-      <div class="btn">
-        <el-button type="primary" @click="addItem" icon="el-icon-circle-plus-outline">添加</el-button>
-      </div>
-      
     </div>
   <el-table
     :data="tableData"
@@ -354,6 +349,11 @@ export default {
 .head .search {
   width: 400px;
   margin-right: 35px;
+}
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
 }
 </style>
 

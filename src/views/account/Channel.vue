@@ -1,21 +1,17 @@
 <template>
     <section>
-        <el-row v-if='$route.path == "/channel"'>
-            <el-col :span='6'>
-                <el-button @click="toShowDialog('0')" type='success' size='medium'><i class='el-icon-plus'></i>新建渠道</el-button>
-            </el-col>
-            <el-col :offset='12' :span='6'>
-                <el-input v-model='searchMsg' placeholder="渠道名称搜索" size='medium' clearable @keyup.native.enter='searchChannel' @clear='getData'>
-                    <el-button slot='append' @click='searchChannel'><i class='el-icon-search'></i></el-button>
-                </el-input>
-            </el-col>
-        </el-row>
+        <div class='top-bar'>
+            <el-button @click="toShowDialog('0')" type='success' size='small' plain><i class='el-icon-plus'></i>新建渠道</el-button>
+            <el-input v-model='searchMsg' placeholder="渠道名称搜索" size='small' clearable @keyup.native.enter='searchChannel' @clear='getData' style='width: 300px;'>
+                <el-button slot='append' @click='searchChannel'><i class='el-icon-search'></i></el-button>
+            </el-input>
+        </div>
         <el-table :data='currentList'
             ref="channelList"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="saveChannel"
-            v-loading='loading'>
+            v-loading='loading' border>
             <el-table-column
             type="selection"
             width="55"
@@ -424,13 +420,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .search-content{
     margin: 10px;
     text-align: right;
     .el-input{
         width: 300px;
     }
+}
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
 }
 </style>
 <style>

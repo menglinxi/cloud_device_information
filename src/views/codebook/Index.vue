@@ -1,28 +1,22 @@
 <template>
     <section>
-        <el-row>
-            <el-col :span="8">
-                <el-input placeholder="请输入内容" v-model="searchKey">
-                    <el-select v-model="groupId" slot="prepend" placeholder="请选择分组" style="min-width:125px">
-                        <el-option
-                                v-for="item in groups"
-                                :label="item.name"
-                                :value="item.id" :key="item.id">
-                        </el-option>
-                    </el-select>
-                    <el-button type="primary" slot="append" icon="search"
-                               @click=" pager.pager.pageNumber = 1 ;doSearch()">GO
-                    </el-button>
-                </el-input>
-            </el-col>
-            <el-col :span="6" :offset="10">
-                <el-button type="primary" icon="el-icon-fa-plus" size="small"
-                           @click="addEditShow = true ; codebook={groupId:null};nodes=[]">
-                    添加码本
+        <div class='top-bar'>
+            <el-button type="success" icon="el-icon-fa-plus" size="small" plain
+                @click="addEditShow = true ; codebook={groupId:null};nodes=[]">
+                添加码本
+            </el-button>
+            <el-input placeholder="请输入内容" v-model="searchKey" style='width: 500px;' size='small'>
+                <el-select v-model="groupId" slot="prepend" placeholder="请选择分组" style="min-width:125px">
+                    <el-option
+                            v-for="item in groups"
+                            :label="item.name"
+                            :value="item.id" :key="item.id">
+                    </el-option>
+                </el-select>
+                <el-button type="primary" slot="append" icon="search" @click=" pager.pager.pageNumber = 1 ;doSearch()">GO
                 </el-button>
-            </el-col>
-        </el-row>
-
+            </el-input>
+        </div>
         <el-table :data="pager.dataList" border stripe style="width: 100%" v-loading='loading'>
             <el-table-tree-column
                     :remote="remote"
@@ -83,8 +77,12 @@
 
     </section>
 </template>
-<style>
-
+<style scoped>
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
 </style>
 <script>
     export default {

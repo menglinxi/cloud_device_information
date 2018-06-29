@@ -1,18 +1,14 @@
 <template>
     <section>
-        <el-row>
-            <el-col :span="6">
-                <el-input placeholder="请输入内容" v-model="searchKey" prefix-icon="el-icon-fa-search">
-                    <div slot="append">
-                        <el-button type="primary" icon="el-icon-fa-search"
-                                   @click=" pager.pager.pageNumber = 1 ;doSearch()"></el-button>
-                    </div>
-                </el-input>
-            </el-col>
-            <el-col :span="6" :offset="12">
-                <el-button type="primary" icon="el-icon-fa-plus" @click="addRole" size="small">添加角色</el-button>
-            </el-col>
-        </el-row>
+        <div class='top-bar'>
+            <el-button type="success" plain icon="el-icon-fa-plus" @click="addRole" size="small">添加角色</el-button>
+            <el-input placeholder="请输入内容" v-model="searchKey" prefix-icon="el-icon-fa-search" style='width: 300px;' size='small'>
+                <div slot="append">
+                    <el-button type="primary" icon="el-icon-fa-search"
+                                @click=" pager.pager.pageNumber = 1 ;doSearch()"></el-button>
+                </div>
+            </el-input>
+        </div>
         <el-table :data="pager.dataList" border stripe style="width: 100%" v-loading='loading'>
             <el-table-column prop="id" label="ID" header-align="center" align="center" width="55">
             </el-table-column>
@@ -44,7 +40,7 @@
         </el-table>
         <el-pagination small style='text-align: center; margin-top: 10px;' layout="prev, pager, next"
                         :total="pager.pager.recordCount" :page-size="pager.pager.pageSize"
-                        :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.pageCount > 15"
+                        :current-page.sync="pager.pager.pageNumber" v-show="pager.pager.recordCount > 15"
                         @current-change="changePage">
         </el-pagination>
         <!-- 弹框区域-->
@@ -96,9 +92,6 @@
         </el-dialog>
     </section>
 </template>
-<style>
-
-</style>
 <script>
     export default {
         data() {
@@ -374,3 +367,10 @@
         }
     };
 </script>
+<style scoped>
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+</style>

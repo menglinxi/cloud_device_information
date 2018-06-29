@@ -1,17 +1,12 @@
 <template>
   <section>
-    <div class="head">
-      <div class="search">
-        <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select">
+    <div class="top-bar">
+        <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select" style='width: 300px;' size='small'>
           <el-button slot="append" @click="searchKeys" icon="el-icon-search"></el-button>
         </el-input>
-      </div>
-      <!-- <div class="btn">
-        <el-button type="primary" @click="addItem" icon="el-icon-circle-plus-outline">添加</el-button>
-      </div> -->
-
+        <!-- <el-button type="primary" @click="addItem" icon="el-icon-fa-plus" plain size='small'>添加</el-button> -->
     </div>
-    <el-table :data="tableData" border style="width: 100%" v-loading='loading'>
+    <el-table :data="tableData" border style="width: 100%" v-loading='loading' align='center'>
       <el-table-column prop="AndroidId" label="AndroidID">
       </el-table-column>
       <el-table-column prop="taskid" label="任务ID">
@@ -104,7 +99,7 @@ export default {
     getList() {
       this.loading = true;
       var type = "Android";
-      this.$api.Device.list(this.page.pagenum, type, res => {
+      this.$api.Device.list(this.page.pageNumber, type, res => {
         this.loading = false;
         //console.log(res);
         this.tableData = res.pager.dataList;
@@ -126,16 +121,14 @@ export default {
 };
 </script>
 <style scoped>
-.head {
-  padding: 15px 0;
-  display: flex;
-}
-.head .search {
-  width: 400px;
-  margin-right: 35px;
-}
 .page {
   margin: 20px auto;
+}
+.top-bar{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    margin: 10px 0;
 }
 </style>
 

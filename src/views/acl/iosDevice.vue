@@ -1,8 +1,8 @@
 <template>
   <section>
     <div class="head">
-      <div class="search">
-        <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select">
+      <div class="top-bar">
+        <el-input placeholder="请输入内容" v-model="searchKey" class="input-with-select" style='width: 300px;' size='small'>
           <el-button slot="append" @click="searchKeys" icon="el-icon-search"></el-button>
         </el-input>
       </div>
@@ -42,7 +42,7 @@
         <!-- <el-checkbox v-model="show.uuid">uuid</el-checkbox> -->
       </div>
     </div>
-    <el-table :data="tableData" border style="width: 100%" v-loading='loading'>
+    <el-table :data="tableData" border style="width: 100%" v-loading='loading' align='center'>
       <el-table-column fixed width='150' prop="token" label="Token">
       </el-table-column>
       <el-table-column width='150' prop="user" label="用户名">
@@ -209,12 +209,14 @@ export default {
 </script>
 <style scoped>
 .head {
-  padding: 15px 0;
+  padding: 0 0 15px;
   /* display: flex; */
 }
-.head .search {
-  width: 400px;
-  margin-right: 35px;
+.top-bar{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    margin: 10px 0;
 }
 .page {
   margin: 20px auto;

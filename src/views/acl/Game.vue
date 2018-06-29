@@ -1,11 +1,11 @@
 <template>
     <section>
-        <el-row>
+        <el-row style='margin-top: 10px;'>
             <el-col :span='6'>
-                <el-button @click='toAdd' type='success' size='medium'><i class='el-icon-plus'></i>新建游戏</el-button>
+                <el-button @click='toAdd' type='success' plain size='small'><i class='el-icon-plus'></i>新建游戏</el-button>
             </el-col>
             <el-col :offset='12' :span='6'>
-                <el-input v-model='searchMsg' placeholder="账号名称搜索" size='medium' clearable @keyup.native.enter='searchGame'>
+                <el-input v-model='searchMsg' placeholder="账号名称搜索" size='small' clearable @keyup.native.enter='searchGame'>
                     <el-select class='preIpt' v-model="chosedChannelId" slot="prepend" filterable clearable placeholder="请选择渠道"  @change='searchGame'>
                         <el-option
                         v-for="item in channelList"
@@ -18,7 +18,7 @@
                 </el-input>
             </el-col>
         </el-row>
-        <el-table :data='dataList'>
+        <el-table :data='dataList' border>
             <el-table-column prop='sort' label='序号' width='60' align='center'></el-table-column>
             <el-table-column prop='gamename' label='游戏名称' width='160' align='center'></el-table-column>
             <el-table-column prop='channelobj.name' label='所属渠道' width='160' align='center'></el-table-column>
@@ -101,7 +101,7 @@
                 <el-form-item label='所属渠道'>
                     <el-select v-model="msgContent.content.channel" filterable placeholder="请选择渠道">
                         <el-option
-                        v-for="item in channelList"
+                        v-for="item in topChannelList"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id">
@@ -176,6 +176,9 @@ export default {
                 return e
             })
             return list
+        },
+        topChannelList() {
+            return this.$store.getters.topChannel()
         }
     },
     watch: {

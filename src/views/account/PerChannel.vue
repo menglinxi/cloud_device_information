@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class='top-banner'>
+        <div class='top-bar'>
             <el-button size='small' type='success' plain @click='addData'>添加数据</el-button>
             <el-date-picker
                 v-model="timeRange"
@@ -8,10 +8,12 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd"
-                @change='handleDate'>
+                @change='handleDate'
+                size='small'>
             </el-date-picker>
         </div>
         <el-table
+            border
             :data='dataList'
             width='100%'>
             <el-table-column prop='dates' label='日期' align='center'></el-table-column>
@@ -222,10 +224,10 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.top-banner{
+.top-bar{
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    margin: 10px 0;
 }
 .line{
     display: flex;

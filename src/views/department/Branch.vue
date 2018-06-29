@@ -1,20 +1,15 @@
-<
 <template>
     <section>
-        <el-row>
-            <el-col :span="8">
-                <el-input placeholder="请输入内容" v-model="searchKey">
-                    <el-button type="primary" slot="append" icon="search"
-                               @click=" pager.pager.pageNumber = 1 ;doSearch()">GO
-                    </el-button>
-                </el-input>
-            </el-col>
-            <el-col :span="6" :offset="10">
-                <el-button type="primary" icon="el-icon-fa-plus" size="small" @click="addBranch">
+        <div class='top-bar'>
+            <el-button type="success" plain icon="el-icon-fa-plus" size="small" @click="addBranch">
                     添加机构
                 </el-button>
-            </el-col>
-        </el-row>
+            <el-input placeholder="请输入内容" v-model="searchKey" style='width: 300px;' size='small'>
+                <el-button type="primary" slot="append" icon="search"
+                            @click=" pager.pager.pageNumber = 1 ;doSearch()">GO
+                </el-button>
+            </el-input>
+        </div>
         <el-table :data="pager.dataList" border stripe style="width: 100%">
             <el-table-tree-column :remote="remote" file-icon="icon icon-file" folder-icon="icon icon-folder"
                                   parentKey="parentId" prop="id" label="ID" header-align="center" align="center"
@@ -91,8 +86,12 @@
     </section>
 </template>
 
-<style>
-
+<style scoped>
+.top-bar{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
 </style>
 
 <script>

@@ -49,7 +49,10 @@ export default new Vuex.Store({
         },
         channelName: (state, getters) => (id) => {
             return state.channelList.filter(e => e.id === id);
-        } 
+        },
+        topChannel: (state) => () => {
+            return state.channelList.filter(e => e.pid === 0);
+        }
     },
     state: {
         loginUser: {
